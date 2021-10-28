@@ -16,7 +16,8 @@
     "test-btc": "mocha --timeout 180000 -R spec test/testBtc.js --recursive --exit",
     "test-kv": "mocha --timeout 180000 -R spec test/testKv.js --recursive --exit",
     "test-wallet-jobs": "mocha --timeout 300000 -R spec test/testWalletJobs.js --recursive --exit",
-    "test-sigs": "mocha --timeout 300000 -R spec test/testSigs.js --recursive --exit"
+    "test-sigs": "mocha --timeout 300000 -R spec test/testSigs.js --recursive --exit",
+    "test-sol": "mocha --timeout 300000 -R spec test/testSol.js --recursive --exit"
   },
   "main": "./index.js",
   "repository": {
@@ -24,6 +25,7 @@
     "url": "https://github.com/GridPlus/gridplus-sdk.git"
   },
   "dependencies": {
+    "@solana/web3.js": "^1.30.2",
     "aes-js": "^3.1.1",
     "bech32": "^2.0.0",
     "bignumber.js": "^9.0.1",
@@ -47,6 +49,7 @@
     "bitcoinjs-lib": "4.0.3",
     "chai": "^4.2.0",
     "cli-interact": "^0.1.9",
+    "ed25519-hd-key": "^1.2.0",
     "eslint": "^5.9.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.20.2",
