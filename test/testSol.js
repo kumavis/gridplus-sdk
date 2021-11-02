@@ -1,4 +1,5 @@
 const helpers = require('./testUtil/helpers');
+const crypto = require('crypto')
 let client;
 
 // describe('Connect', () => {
@@ -14,6 +15,24 @@ let client;
 //     expect(client.hasActiveWallet()).to.equal(true);
 //   });
 // })
+
+
+function hashEd25519(_msg, _privKey) {
+  const privKeyLeft = Buffer.from(_privKey, 'hex').slice(0, 32);
+  const privHash = crypto.createHash('sha512').update(privKeyLeft).digest();
+  privHash[0] &= 248;
+  privHash[31] &= 127;
+  privHash[31] |= 64;
+  const msg = Buffer.from(_msg, 'hex');
+  const secretMsg = Buffer.alloc(64 + msg.length)
+  for (let i = 0; i < msg.length; i++) {
+    secretMsg[64 + i] = msg[i];
+  }
+  for (let i = 0; i < 32; i++) {
+    secretMsg[32 + i] = privHash[32 + i];
+  }
+  return crypto.createHash('sha512').update(secretMsg.slice(32)).digest();
+}
 
 describe('Test transactions', () => {
   it('Should test a dummy transaction', async () => {
@@ -40,7 +59,7 @@ describe('Test transactions', () => {
                             '050402010003010105030102000907e803000000000000';
 
     // LOCAL TESTING
-    const elliptic = require('elliptic').eddsa
+    const EdDSA = require('elliptic').eddsa
     const solana = require('@solana/web3.js')
     const hdKey = require('ed25519-hd-key')
     const nacl = require('tweetnacl')
@@ -50,21 +69,35 @@ describe('Test transactions', () => {
     
     const path = 'm/44\'/501\'/0\'/0\''
     const derivedSeed = hdKey.derivePath(path, dummySeed)
-    console.log('Derived Seed:', derivedSeed)
+    // console.log('Derived Seed:', derivedSeed)
     const kp = nacl.sign.keyPair.fromSeed(derivedSeed.key)
     const pubStr = Buffer.from(kp.publicKey).toString('hex')
-    console.log('KeyPair pub:', pubStr)
+    // console.log('KeyPair pub:', pubStr)
     const account = new solana.Account(kp.secretKey)
-    console.log('Signer', account.secretKey.toString('hex'))
-    console.log('Pubkey', account.publicKey.toString('hex'))
+    console.log('Account Signer', account.secretKey.toString('hex'))
+    // console.log('Account Pubkey', account.publicKey._bn.toString('hex'))
+    // console.log('Account Address', account.publicKey.toString())
+    
     // build and sign tx
     const tx = solana.Transaction.from(Buffer.from(TOKEN_CREATE_TX, 'hex'))
-    tx.partialSign(account)
+    const unsignedMsg = tx.serializeMessage();
+    // tx.partialSign(account)
+
+/*
+    // NOTE: `elliptic` does not seem to be deriving the correct pubkey
+
     // Verify the sig
     // compile the message and hash with sha512? need to figure out how to get the correct hash
-    const ed = new elliptic('ed25519')
+    // Note that the hash to sign is sha512(sha512(privKey) + msg)
+    const h = hashEd25519(unsignedMsg, account.secretKey)
+    const ed = new EdDSA('ed25519')
+    const sigKey = ed.keyFromSecret(account.secretKey.toString('hex'))
+    console.log('sigkey.pub?', sigKey.getPublic())
+    const signature = sigKey.sign(h).toHex();
+    console.log('signature', signature)
     const valKey = ed.keyFromPublic(pubStr, 'hex')
-
+    const validated = sigKey.verify(h, signature)
+    console.log('validated?', validated)
     // Client SOL transaction function should do the following:
     // 1. Receive a hex string or buffer and attempt to create a solana transaction from it
     // 2. If we can create a transaction, convert the transaction data to a format the lattice can consume
@@ -72,5 +105,6 @@ describe('Test transactions', () => {
     // 3. On receipt of signature, rebuild transaction object with sigs attached
     // 4. Run transaction._verifySignatures to validate the transaction
     // 5. Serialize the full transaction and return the buffer
+*/
   })
 })
