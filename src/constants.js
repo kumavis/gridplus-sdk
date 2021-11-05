@@ -115,6 +115,7 @@ const signingSchema = {
     ERC20_TRANSFER: 2,
     ETH_MSG: 3,
     EXTRA_DATA: 4,
+    SOLANA_TX: 5,
 }
 
 const REQUEST_TYPE_BYTE = 0x02; // For all HSM-bound requests
@@ -306,7 +307,12 @@ function getFwVersionConst(v) {
     // EXTRA FIELDS ADDED IN LATER VERSIONS
     //-------------------------------------
 
-    // V0.11.5 added an API for creating, removing, and fetching key-val file
+    // V0.13.0 added support for Solana transactions
+    if (!legacy && gte(v, [0, 13, 0])) {
+        c.solanaMaxDataSz = 1642;
+    }
+
+    // V0.12.0 added an API for creating, removing, and fetching key-val file
     // records. For the purposes of this SDK, we only hook into one type of kv
     // file: address names.
     if (!legacy && gte(v, [0, 12, 0])) {

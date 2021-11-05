@@ -3,12 +3,13 @@
 const BN = require('bignumber.js');
 const Buffer = require('buffer/').Buffer;
 const cbor = require('borc');
-const constants = require('./constants');
 const ethers = require('ethers');
 const eip712 = require('ethers-eip712');
 const keccak256 = require('js-sha3').keccak256;
 const rlp = require('rlp-browser');
 const secp256k1 = require('secp256k1');
+const constants = require('./constants');
+const { getExtraDataPayloads } = require('./util');
 
 exports.buildEthereumMsgRequest = function(input) {
   if (!input.payload || !input.protocol || !input.signerPath)
@@ -248,7 +249,7 @@ exports.buildEthereumTxRequest = function(data) {
     }
 
     // Flow data into extraData requests, which will follow-up transaction requests, if supported/applicable    
-    const extraDataPayloads = [];
+    let extraDataPayloads = [];
     let prehash = null;
 
     // Create the buffer, prefix with chainId (if needed) and add data slice
@@ -273,12 +274,7 @@ exports.buildEthereumTxRequest = function(data) {
         if ((!EXTRA_DATA_ALLOWED) || (EXTRA_DATA_ALLOWED && totalSz > maxSzAllowed))
           throw new Error(`Data field too large (got ${dataBytes.length}; must be <=${maxSzAllowed-chainIdExtraSz} bytes)`);
         // Split overflow data into extraData frames
-        const frames = splitFrames(dataToCopy.slice(MAX_BASE_DATA_SZ), extraDataFrameSz);
-        frames.forEach((frame) => {
-          const szLE = Buffer.alloc(4);
-          szLE.writeUInt32LE(frame.length);
-          extraDataPayloads.push(Buffer.concat([szLE, frame]));
-        })
+        extraDataPayloads = getExtraDataPayloads(dataToCopy.slice(MAX_BASE_DATA_SZ), extraDataFrameSz);
       }
     } else if (PREHASH_UNSUPPORTED) {
       // If something is unsupported in firmware but we want to allow such transactions,
@@ -694,7 +690,7 @@ function getExtraData(payload, input) {
   const { ethMaxMsgSz, extraDataFrameSz, extraDataMaxFrames } = input.fwConstants;
   const MAX_BASE_MSG_SZ = ethMaxMsgSz;
   const EXTRA_DATA_ALLOWED = extraDataFrameSz > 0 && extraDataMaxFrames > 0;
-  const extraDataPayloads = [];
+  let extraDataPayloads = [];
   if (payload.length > MAX_BASE_MSG_SZ) {
     // Determine sizes and run through sanity checks
     const maxSzAllowed = MAX_BASE_MSG_SZ + (extraDataMaxFrames * extraDataFrameSz);
@@ -703,25 +699,9 @@ function getExtraData(payload, input) {
     else if (EXTRA_DATA_ALLOWED && payload.length > maxSzAllowed)
       throw new Error(`Your message is ${payload.length} bytes, but can only be a maximum of ${maxSzAllowed}`);
     // Split overflow data into extraData frames
-    const frames = splitFrames(payload.slice(MAX_BASE_MSG_SZ), extraDataFrameSz);
-    frames.forEach((frame) => {
-      const szLE = Buffer.alloc(4);
-      szLE.writeUInt32LE(frame.length);
-      extraDataPayloads.push(Buffer.concat([szLE, frame]));
-    })
+    extraDataPayloads = getExtraDataPayloads(payload.slice(MAX_BASE_MSG_SZ), extraDataFrameSz);
   }
   return extraDataPayloads;
-}
-
-function splitFrames(data, frameSz) {
-  const frames = []
-  const n = Math.ceil(data.length / frameSz);
-  let off = 0;
-  for (let i = 0; i < n; i++) {
-    frames.push(data.slice(off, off + frameSz));
-    off += frameSz;
-  }
-  return frames;
 }
 
 function parseEIP712Msg(msg, typeName, types, isEthers=false) {

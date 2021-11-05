@@ -1,6 +1,7 @@
 // Static utility functions
 const { buildBitcoinTxRequest } = require('./bitcoin');
 const { buildEthereumTxRequest, buildEthereumMsgRequest, ensureHexBuffer } = require('./ethereum');
+const { buildSolanaTxRequest } = require('./solana');
 const Buffer = require('buffer/').Buffer
 const aes = require('aes-js');
 const crc32 = require('crc-32');
@@ -88,6 +89,7 @@ const signReqResolver = {
   'BTC': buildBitcoinTxRequest,
   'ETH': buildEthereumTxRequest,
   'ETH_MSG': buildEthereumMsgRequest,
+  'SOL': buildSolanaTxRequest,
 }
 
 // Temporary helper to determine if this is a supported BIP44 parent path
@@ -147,6 +149,22 @@ function getP256KeyPairFromPub(pub) {
   return ec.keyFromPublic(pub, 'hex');
 }
 
+function getExtraDataPayloads(data, frameSz) {
+  const frames = []
+  const n = Math.ceil(data.length / frameSz);
+  let off = 0;
+  for (let i = 0; i < n; i++) {
+    frames.push(data.slice(off, off + frameSz));
+    off += frameSz;
+  }
+  const extraDataPayloads = [];
+  frames.forEach((frame) => {
+    const szLE = Buffer.alloc(4);
+    szLE.writeUInt32LE(frame.length);
+    extraDataPayloads.push(Buffer.concat([szLE, frame]));
+  })
+}
+
 module.exports = {
   isValidAssetPath,
   isValidCoinType,
@@ -160,4 +178,5 @@ module.exports = {
   getP256KeyPair,
   getP256KeyPairFromPub,
   toPaddedDER,
+  getExtraDataPayloads,
 }

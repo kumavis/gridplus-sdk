@@ -1,5 +1,7 @@
 const bs58 = require('bs58');
-const cbor = require('cbor');
+const cbor = require('borc');
+const constants = require('./constants');
+const { getExtraDataPayloads } = require('./util');
 
 exports.buildSolanaTxRequest = function(data) {
   try {
@@ -7,27 +9,44 @@ exports.buildSolanaTxRequest = function(data) {
     const { 
       extraDataFrameSz, 
       extraDataMaxFrames, 
-      prehashAllowed, 
-      ethMaxDataSz:dataMaxSz 
+      solanaMaxDataSz,
     } = fwConstants;
-    const FOO_SZ = dataMaxSz; // TODO: Figure out metadata offsets
-    const reqBuffer = _buildSolanaTxRequest(_tx, FOO_SZ);
-    
-  
-
-
+    // Make sure Solana is supported
+    if (!solanaMaxDataSz) {
+      throw new Error('Solana not supported by your firmware. Please update.');
+    }
+    const reqBuf = _buildSolanaTxRequest(_tx);
+    const maxSz = solanaMaxDataSz + (extraDataMaxFrames * extraDataFrameSz);
+    if (reqBuf.length > maxSz)
+      throw new Error(`Request too large: got ${reqBuf.length} bytes, but max size is ${maxSz}`);
+    let extraDataPayloads = [];
+    if (reqBuf.length > solanaMaxDataSz) {
+      // Spit into frames
+      extraDataPayloads = getExtraDataPayloads(reqBuf.slice(solanaMaxDataSz), extraDataFrameSz);
+    }
+    return {
+      extraDataPayloads,
+      payload: reqBuf.slice(0, solanaMaxDataSz),
+      schema: constants.signingSchema.SOLANA_TX,
+      signerPath,
+    }
   } catch (err) {
-    return err;
+    return { err: err.message };
   }
 }
+
 // Expects an uncompiled @solana/web3.js Transaction type as input (`_tx`).
 // Returns a serialized payload that can be sent to Lattice firmware.  
-function _buildSolanaTxRequest(_tx, sz) {
+function _buildSolanaTxRequest(_tx) {
   try {
     const tx = _tx.compile();
-    const buf = Buffer.alloc(sz);
     // CBOR-encode the data using custom keys
     const txEnc = {};
+    // Add signers. These are not technically part of the message but they are important
+    // information. The wallet will need to find corresponding secret keys.
+    // IMPORTANT NOTE: Not all signers will be wallet-derived accounts. If the Lattice
+    // cannot find the corresponding secret key it will return an empty signature.
+
     // 1. Metadata
     txEnc[NAME_CODES.numRequiredSignatures] = _bufNum(tx.numRequiredSignatures);
     txEnc[NAME_CODES.numReadonlySignedAccounts] = _bufNum(tx.numReadonlySignedAccounts);
@@ -49,10 +68,20 @@ function _buildSolanaTxRequest(_tx, sz) {
         [txEnc[NAME_CODES].data]: instruction.data,
       })
     })
-    return buf;
+    return cbor.encode(tx)
   } catch (err) {
     return new Error(`Failed to build Solana tx: ${err.message}`);
   }
+}
+
+// Get a set of unique signing accounts (public keys) from an *uncompiled* tx
+function _getUniqueSigners(tx) {
+  const signers = [];
+  // Signers are packed into the `signatures` field
+  tx.signatures.forEach((s) => {
+    signers.push(Buffer.from(s.publicKey._bn.toString('hex'), 'hex'));
+  })
+  return signers;
 }
 
 function _bufNum(n) {
@@ -77,4 +106,5 @@ const NAME_CODES = {
   accounts: 'S09',
   _dataLength: 'S10',
   data: 'S11',
+  _signers: 'S12',
 }
