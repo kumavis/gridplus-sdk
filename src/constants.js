@@ -15,6 +15,7 @@ const decResLengths = {
     getWallets: 142,                    // 71 bytes per wallet record (response contains internal and external)
     addAbiDefs: 8,
     getKvRecords: 1395,
+    gart: 1500,
     test: 1646                          // Max size of test response payload
 }
 
@@ -117,6 +118,7 @@ const signingSchema = {
     ERC20_TRANSFER: 2,
     ETH_MSG: 3,
     EXTRA_DATA: 4,
+    GART: 5,
 }
 
 const HARDENED_OFFSET = 0x80000000; // Hardened offset
@@ -316,11 +318,16 @@ function getFwVersionConst(v) {
         c.addrFlagsAllowed = false;
     }
     // These transformations apply to all versions
-    c.ethMaxDataSz = c.reqMaxDataSz - 128;
-    c.ethMaxMsgSz = c.ethMaxDataSz;
+    c.maxTxDataSz = c.reqMaxDataSz - 128;
 
     // EXTRA FIELDS ADDED IN LATER VERSIONS
     //-------------------------------------
+    // V0.14.0 added GART
+    // TODO: SWITCH BACK TO 0.14.0
+    if (!legacy && gte(v, [0, 13, 0])) {
+        c.allowGart = true;
+    }
+
 
     // V0.13.0 added native segwit addresses and fixed a bug in exporting
     // legacy bitcoin addresses

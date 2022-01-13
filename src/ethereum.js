@@ -8,6 +8,7 @@ const eip712 = require('eth-eip712-util').TypedDataUtils;
 const keccak256 = require('js-sha3').keccak256;
 const rlp = require('rlp-browser');
 const secp256k1 = require('secp256k1');
+const { buildSignerPathBuf, ensureHexBuffer, getExtraData, splitFrames } = require('./util')
 
 exports.buildEthereumMsgRequest = function(input) {
   if (!input.payload || !input.protocol || !input.signerPath)
@@ -65,7 +66,7 @@ exports.buildEthereumTxRequest = function(data) {
       contractDeployKey, extraDataFrameSz, extraDataMaxFrames, prehashAllowed 
     } = fwConstants;
     const EXTRA_DATA_ALLOWED = extraDataFrameSz > 0 && extraDataMaxFrames > 0;
-    let MAX_BASE_DATA_SZ = fwConstants.ethMaxDataSz;
+    let MAX_BASE_DATA_SZ = fwConstants.maxTxDataSz;
     const VAR_PATH_SZ = fwConstants.varAddrPathSzAllowed;
     // Sanity checks:
     // There are a handful of named chains we allow the user to reference (`chainIds`)
@@ -522,49 +523,10 @@ function useChainIdBuffer(id) {
     return buf.readUInt8(0) === 255;
   return true;
 }
-
 exports.chainIds = chainIds;
 
-function isBase10NumStr(x) {
-  const bn = new BN(x).toString().split('.').join('');
-  const s = new String(x)
-  // Note that the JS native `String()` loses precision for large numbers, but we only
-  // want to validate the base of the number so we don't care about far out precision.
-  return bn.slice(0, 8) === s.slice(0, 8)
-}
-
-// Ensure a param is represented by a buffer
-// TODO: Remove circular dependency in util.js so that we can put this function there
-function ensureHexBuffer(x, zeroIsNull=true) {
-  try {
-    // For null values, return a 0-sized buffer. For most situations we assume
-    // 0 should be represented with a zero-length buffer (e.g. for RLP-building
-    // txs), but it can also be treated as a 1-byte buffer (`00`) if needed
-    if (x === null || (x === 0 && zeroIsNull === true)) 
-      return Buffer.alloc(0);
-    const isNumber = typeof x === 'number' || isBase10NumStr(x);
-    // Otherwise try to get this converted to a hex string
-    if (isNumber) {
-      // If this is a number or a base-10 number string, convert it to hex
-      x = `${new BN(x).toString(16)}`;
-    } else if (typeof x === 'string' && x.slice(0, 2) === '0x') {
-      x = x.slice(2);
-    } else {
-      x = x.toString('hex')
-    }
-    if (x.length % 2 > 0) x = `0${x}`;
-    if (x === '00' && !isNumber)
-      return Buffer.alloc(0);
-    return Buffer.from(x, 'hex');
-  } catch (err) {
-    throw new Error(`Cannot convert ${x.toString()} to hex buffer (${err.toString()})`);
-  }
-}
-exports.ensureHexBuffer = ensureHexBuffer;
-
-
 function buildPersonalSignRequest(req, input) {
-  const MAX_BASE_MSG_SZ = input.fwConstants.ethMaxMsgSz;
+  const MAX_BASE_MSG_SZ = input.fwConstants.maxTxDataSz;
   const VAR_PATH_SZ = input.fwConstants.varAddrPathSzAllowed;
   const L = (24) + MAX_BASE_MSG_SZ + 4;
   let off = 0;
@@ -616,7 +578,7 @@ function buildPersonalSignRequest(req, input) {
   } else {
     // Otherwise we can fit the payload.
     // Flow data into extraData requests, which will follow-up transaction requests, if supported/applicable    
-    const extraDataPayloads = getExtraData(payload, input);
+    const extraDataPayloads = getExtraData(payload, fwConst);
     // Write the payload and metadata into our buffer
     req.extraDataPayloads = extraDataPayloads
     req.msg = payload;
@@ -629,7 +591,7 @@ function buildPersonalSignRequest(req, input) {
 
 function buildEIP712Request(req, input) {
   try {
-    const MAX_BASE_MSG_SZ = input.fwConstants.ethMaxMsgSz;
+    const MAX_BASE_MSG_SZ = input.fwConstants.maxTxDataSz;
     const VAR_PATH_SZ = input.fwConstants.varAddrPathSzAllowed;
     const TYPED_DATA = constants.ethMsgProtocol.TYPED_DATA;
     const L = (24) + MAX_BASE_MSG_SZ + 4;
@@ -675,7 +637,7 @@ function buildEIP712Request(req, input) {
       prehash.copy(req.payload, off);
       req.prehash = prehash;
     } else {
-      const extraDataPayloads = getExtraData(payload, input);
+      const extraDataPayloads = getExtraData(payload, fwConst);
       req.extraDataPayloads = extraDataPayloads;
       req.payload.writeUInt16LE(payload.length, off); off += 2;
       payload.copy(req.payload, off); off += payload.length;
@@ -686,58 +648,6 @@ function buildEIP712Request(req, input) {
   } catch (err) {
     return { err: `Failed to build EIP712 request: ${err.message}` };
   }
-}
-
-function buildSignerPathBuf(signerPath, varAddrPathSzAllowed) {
-  const buf = Buffer.alloc(24);
-  let off = 0;
-  if (varAddrPathSzAllowed && signerPath.length > 5)
-    throw new Error('Signer path must be <=5 indices.');
-  if (!varAddrPathSzAllowed && signerPath.length !== 5)
-    throw new Error('Your Lattice firmware only supports 5-index derivation paths. Please upgrade.');
-  buf.writeUInt32LE(signerPath.length, off); off += 4;
-  for (let i = 0; i < 5; i++) {
-    if (i < signerPath.length)
-      buf.writeUInt32LE(signerPath[i], off); 
-    else
-      buf.writeUInt32LE(0, off);
-    off += 4;
-  }
-  return buf;
-}
-
-function getExtraData(payload, input) {
-  const { ethMaxMsgSz, extraDataFrameSz, extraDataMaxFrames } = input.fwConstants;
-  const MAX_BASE_MSG_SZ = ethMaxMsgSz;
-  const EXTRA_DATA_ALLOWED = extraDataFrameSz > 0 && extraDataMaxFrames > 0;
-  const extraDataPayloads = [];
-  if (payload.length > MAX_BASE_MSG_SZ) {
-    // Determine sizes and run through sanity checks
-    const maxSzAllowed = MAX_BASE_MSG_SZ + (extraDataMaxFrames * extraDataFrameSz);
-    if (!EXTRA_DATA_ALLOWED)
-      throw new Error(`Your message is ${payload.length} bytes, but can only be a maximum of ${MAX_BASE_MSG_SZ}`);
-    else if (EXTRA_DATA_ALLOWED && payload.length > maxSzAllowed)
-      throw new Error(`Your message is ${payload.length} bytes, but can only be a maximum of ${maxSzAllowed}`);
-    // Split overflow data into extraData frames
-    const frames = splitFrames(payload.slice(MAX_BASE_MSG_SZ), extraDataFrameSz);
-    frames.forEach((frame) => {
-      const szLE = Buffer.alloc(4);
-      szLE.writeUInt32LE(frame.length);
-      extraDataPayloads.push(Buffer.concat([szLE, frame]));
-    })
-  }
-  return extraDataPayloads;
-}
-
-function splitFrames(data, frameSz) {
-  const frames = []
-  const n = Math.ceil(data.length / frameSz);
-  let off = 0;
-  for (let i = 0; i < n; i++) {
-    frames.push(data.slice(off, off + frameSz));
-    off += frameSz;
-  }
-  return frames;
 }
 
 function parseEIP712Msg(msg, typeName, types, forJSParser=false) {

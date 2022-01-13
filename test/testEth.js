@@ -25,6 +25,7 @@ const seedrandom = require('seedrandom');
 const prng = new seedrandom(process.env.SEED || 'myrandomseed');
 const HARDENED_OFFSET = constants.HARDENED_OFFSET;
 let client = null;
+let continueTests = true;
 let numRandom = process.env.N || 20; // Number of random tests to conduct
 const randomTxData = [];
 const randomTxDataLabels = [];
@@ -57,7 +58,7 @@ function getChainId(pow, add) {
 }
 
 function buildRandomTxData(fwConstants) {
-  const maxDataSz = fwConstants.ethMaxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
+  const maxDataSz = fwConstants.maxTxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
   for (let i = 0; i < numRandom; i++) {
     const tx = {
       nonce: `0x${new BN(randInt(16000)).toString(16)}`,
@@ -85,16 +86,15 @@ function buildTxReq(txData, network=1, signerPath=[helpers.BTC_PURPOSE_P2PKH, he
   }
 }
 
-let foundError = false;
-
 async function testTxPass(req) {
   const tx = await helpers.execute(client, 'sign', req);
   // Make sure there is transaction data returned
   // (this is ready for broadcast)
   const txIsNull = tx.tx === null;
-  if (txIsNull === true)
-    foundError = true;
-  expect(txIsNull).to.equal(false);
+  if (txIsNull === true) {
+    continueTests = false;
+  }
+  expect(txIsNull).to.equal(false, 'Null object returned from signing');
   // Check the transaction data against a reference implementation
   const txData = {
     type: req.data.type || null,
@@ -131,7 +131,7 @@ async function testTxPass(req) {
     txData.to = `0x${txData.to}`
   const expectedTx = EthTx.serialize(txData, sigData)
   if (tx.tx !== expectedTx) {
-    foundError = true;
+    continueTests = false;
   }
   expect(tx.tx).to.equal(expectedTx);
   return tx
@@ -146,6 +146,9 @@ async function testTxFail(req) {
     return;
   }
   const txIsNull = tx.tx === null;
+  if (!txIsNull) {
+    continueTests = false;
+  }
   expect(txIsNull).to.equal(true, 'Transaction successful but failure was expected.');
 }
 
@@ -178,6 +181,10 @@ describe('Setup client', () => {
 })
 
 describe('Test new transaction types',  () => {
+  beforeEach(() => {
+    expect(continueTests).to.equal(true, 'Previous test failed. Aborting');
+  })
+  
   it('Should test eip1559 params', async () => {
     const txData = {
       type: 2,
@@ -292,7 +299,7 @@ describe('Test new transaction types',  () => {
 if (!process.env.skip) {
   describe('Test ETH Tx Params', () => {
     beforeEach(() => {
-      expect(foundError).to.equal(false, 'Error found in prior test. Aborting.');
+      expect(continueTests).to.equal(false, 'Error found in prior test. Aborting.');
       setTimeout(() => {}, 5000);
     })
 
@@ -382,7 +389,7 @@ if (!process.env.skip) {
       let chainIdSz = 9;
       const fwConstants = constants.getFwVersionConst(client.fwVersion);
       const metadataSz = fwConstants.totalExtraEthTxDataSz || 0;
-      const maxDataSz = (fwConstants.ethMaxDataSz - metadataSz) + 
+      const maxDataSz = (fwConstants.maxTxDataSz - metadataSz) + 
                         (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
       txData.data = `0x${crypto.randomBytes(maxDataSz - chainIdSz).toString('hex')}`;
       await testTxPass(buildTxReq(txData, chainId));
@@ -434,7 +441,7 @@ if (!process.env.skip) {
         return s;
       }
       const fwConstants = constants.getFwVersionConst(client.fwVersion);
-      const maxDataSz = fwConstants.ethMaxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
+      const maxDataSz = fwConstants.maxTxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
 
       txData.data = buildDataStr(1, maxDataSz - 1)
       await testTxPass(buildTxReq(txData))
@@ -511,7 +518,7 @@ if (!process.env.skip) {
 
 describe('Test random transaction data', function() {
   beforeEach(() => {
-    expect(foundError).to.equal(false, 'Error found in prior test. Aborting.');
+    expect(continueTests).to.equal(false, 'Error found in prior test. Aborting.');
   })
 
   it.each(randomTxDataLabels, 'Random transactions %s', ['label'], async function(n, next) {

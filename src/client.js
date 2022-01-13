@@ -3,9 +3,9 @@ const superagent = require('superagent');
 const bitcoin = require('./bitcoin');
 const ethereum = require('./ethereum');
 const { buildAddAbiPayload, abiParsers, MAX_ABI_DEFS } = require('./ethereumAbi');
+const { buildGARTRequest } = require('./gart')
 const {
   isValidAssetPath,
-  signReqResolver,
   aes256_decrypt,
   aes256_encrypt,
   parseDER,
@@ -228,18 +228,34 @@ class Client {
   }
 
   sign(opts, cb, cachedData=null, nextCode=null) {
-    const { currency } = opts;
-    let { data } = opts;
-    if (currency === undefined || data === undefined) {
-      return cb('Please provide `currency` and `data` options');
-    } else if (signReqResolver[currency] === undefined) {
-      return cb('Unsupported currency');
-    }
     // All transaction requests must be put into the same sized buffer.
     // This comes from sizeof(GpTransactionRequest_t), but note we remove
     // the 2-byte schemaId since it is not returned from our resolver.
     // Note that different firmware versions may have different data sizes.
     const fwConstants = getFwVersionConst(this.fwVersion);
+    const { currency } = opts;
+    let { data } = opts;
+    if (!data) {
+      return cb('Please provide`data` option');
+    }  else if (!currency && !fwConstants.allowGart) {
+      // If no currency was provided, we assume this is a GART transaction.
+      return cb('Not supported. Please update your Lattice firmware.');
+    }
+    
+    // Determine how to build this request
+    let f = null;
+    if (currency === 'BTC') {
+      f = bitcoin.buildBitcoinTxRequest;
+    } else if (currency === 'ETH') {
+      f = ethereum.buildEthereumTxRequest;
+    } else if (currency === 'ETH_MSG') {
+      f = ethereum.buildEthereumMsgRequest;
+    } else if (!currency) {
+      f = buildGARTRequest;
+    } else {
+      return cb('Unsupported currency provided.')
+    }
+
     // Build the signing request payload to send to the device. If we catch
     // bad params, return an error instead
     data = { fwConstants, ...data};
@@ -251,9 +267,9 @@ class Client {
       schema = signingSchema.EXTRA_DATA;
     } else {
       try {
-        req = signReqResolver[currency](data);
+        req = f(data);
       } catch (err) {
-        return cb(`Error building BTC transaction request: ${err.message}`);
+        return cb(`Error building transaction request: ${err.message}`);
       }
       if (req.err !== undefined) return cb(req.err);
       if (req.payload.length > fwConstants.reqMaxDataSz)
@@ -950,6 +966,22 @@ class Client {
           s: validatedSig.s.toString('hex'),
         },
         signer,
+      }
+    } else if (!currencyType) {
+      // WIP - we need to figure out how to handle different sig/addr types
+      const sigType = res.readUint8(off); off++;
+      const sig = res.slice(off, off + DERLength); off += DERLength;
+      const addrType = res.readUint8(off); off++;
+      const addr = res.slice(off, off + 64); off += 64; // This size was chosen arbitrarily and can change
+      returnData.data = {
+        sig: {
+          type: sigType,
+          data: sig,
+        },
+        signer: {
+          type: addrType,
+          address: addr,
+        }
       }
     }
 

@@ -183,7 +183,7 @@ describe('Connect and Pair', () => {
     expect(tx.tx).to.not.equal(null);
     req.data.chainId = 'rinkeby';
 
-    req.data.data = client.crypto.randomBytes(fwConstants.ethMaxDataSz).toString('hex');
+    req.data.data = client.crypto.randomBytes(fwConstants.maxTxDataSz).toString('hex');
     tx = await(helpers.execute(client, 'sign', req));
     expect(tx.tx).to.not.equal(null);
     req.data.data = null;
@@ -263,7 +263,7 @@ describe('Connect and Pair', () => {
     req.data.value = 0.3 * 10 ** 18;
 
     // Test data range
-    const maxDataSz = fwConstants.ethMaxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
+    const maxDataSz = fwConstants.maxTxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
     req.data.data = client.crypto.randomBytes(maxDataSz).toString('hex');
     tx = await(helpers.execute(client, 'sign', req));
     expect(tx.tx).to.not.equal(null);
@@ -271,7 +271,7 @@ describe('Connect and Pair', () => {
     req.data.data = client.crypto.randomBytes(maxDataSz+1).toString('hex');
     tx = await(helpers.execute(client, 'sign', req));
     expect(tx.tx).to.not.equal(null);
-    req.data.data = client.crypto.randomBytes(fwConstants.ethMaxDataSz).toString('hex');
+    req.data.data = client.crypto.randomBytes(fwConstants.maxTxDataSz).toString('hex');
     tx = await(helpers.execute(client, 'sign', req));
     expect(tx.tx).to.not.equal(null);
     req.data.data = client.crypto.randomBytes(maxDataSz).toString('hex');

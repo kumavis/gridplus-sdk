@@ -1,6 +1,5 @@
 // Static utility functions
-const { buildBitcoinTxRequest } = require('./bitcoin');
-const { buildEthereumTxRequest, buildEthereumMsgRequest, ensureHexBuffer } = require('./ethereum');
+const BN = require('bignumber.js');
 const Buffer = require('buffer/').Buffer
 const aes = require('aes-js');
 const crc32 = require('crc-32');
@@ -86,12 +85,6 @@ function toPaddedDER(sig) {
 //--------------------------------------------------
 // TRANSACTION UTILS
 //--------------------------------------------------
-const signReqResolver = {
-  'BTC': buildBitcoinTxRequest,
-  'ETH': buildEthereumTxRequest,
-  'ETH_MSG': buildEthereumMsgRequest,
-}
-
 function isValidAssetPath(path, fwConstants) {
   const allowedPurposes = [PURPOSES.ETH, PURPOSES.BTC_LEGACY, PURPOSES.BTC_WRAPPED_SEGWIT, PURPOSES.BTC_SEGWIT];
   const allowedCoins = [COINS.ETH, COINS.BTC, COINS.BTC_TESTNET];
@@ -115,6 +108,64 @@ function isValidAssetPath(path, fwConstants) {
       allowedMyCryptoCoins.indexOf(path[1] - HARDENED_OFFSET) > 0
     )
   );
+}
+
+function splitFrames(data, frameSz) {
+  const frames = []
+  const n = Math.ceil(data.length / frameSz);
+  let off = 0;
+  for (let i = 0; i < n; i++) {
+    frames.push(data.slice(off, off + frameSz));
+    off += frameSz;
+  }
+  return frames;
+}
+
+function getExtraData(data, fwConstants) {
+  const { extraDataFrameSz, extraDataMaxFrames, maxTxDataSz } = fwConstants;
+  if (!extraDataFrameSz || !extraDataMaxFrames) {
+    throw new Error('Please update Lattice firmware.');
+  }
+  const MAX_BASE_MSG_SZ = maxTxDataSz;
+  const EXTRA_DATA_ALLOWED = extraDataFrameSz > 0 && extraDataMaxFrames > 0;
+  const extraDataPayloads = [];
+  if (data.length > MAX_BASE_MSG_SZ) {
+    // Determine sizes and run through sanity checks
+    const maxSzAllowed = MAX_BASE_MSG_SZ + (extraDataMaxFrames * extraDataFrameSz);
+    if (!EXTRA_DATA_ALLOWED)
+      throw new Error(`Your message is ${data.length} bytes, but can only be a maximum of ${MAX_BASE_MSG_SZ}`);
+    else if (EXTRA_DATA_ALLOWED && data.length > maxSzAllowed)
+      throw new Error(`Your message is ${data.length} bytes, but can only be a maximum of ${maxSzAllowed}`);
+    // Split overflow data into extraData frames
+    const frames = splitFrames(data.slice(MAX_BASE_MSG_SZ), extraDataFrameSz);
+    if (frames.length > extraDataMaxFrames) {
+      throw new Error('Message is too large.');
+    }
+    frames.forEach((frame) => {
+      const szLE = Buffer.alloc(4);
+      szLE.writeUInt32LE(frame.length);
+      extraDataPayloads.push(Buffer.concat([szLE, frame]));
+    })
+  }
+  return extraDataPayloads;
+}
+
+function buildSignerPathBuf(signerPath, varAddrPathSzAllowed) {
+  const buf = Buffer.alloc(24);
+  let off = 0;
+  if (varAddrPathSzAllowed && signerPath.length > 5)
+    throw new Error('Signer path must be <=5 indices.');
+  if (!varAddrPathSzAllowed && signerPath.length !== 5)
+    throw new Error('Your Lattice firmware only supports 5-index derivation paths. Please upgrade.');
+  buf.writeUInt32LE(signerPath.length, off); off += 4;
+  for (let i = 0; i < 5; i++) {
+    if (i < signerPath.length)
+      buf.writeUInt32LE(signerPath[i], off); 
+    else
+      buf.writeUInt32LE(0, off);
+    off += 4;
+  }
+  return buf;
 }
 
 //--------------------------------------------------
@@ -155,10 +206,48 @@ function getP256KeyPairFromPub(pub) {
   return ec.keyFromPublic(pub, 'hex');
 }
 
+function isBase10NumStr(x) {
+  const bn = new BN(x).toString().split('.').join('');
+  const s = new String(x)
+  // Note that the JS native `String()` loses precision for large numbers, but we only
+  // want to validate the base of the number so we don't care about far out precision.
+  return bn.slice(0, 8) === s.slice(0, 8)
+}
+
+// Ensure a param is represented by a buffer
+// TODO: Remove circular dependency in util.js so that we can put this function there
+function ensureHexBuffer(x, zeroIsNull=true) {
+  try {
+    // For null values, return a 0-sized buffer. For most situations we assume
+    // 0 should be represented with a zero-length buffer (e.g. for RLP-building
+    // txs), but it can also be treated as a 1-byte buffer (`00`) if needed
+    if (x === null || (x === 0 && zeroIsNull === true)) 
+      return Buffer.alloc(0);
+    const isNumber = typeof x === 'number' || isBase10NumStr(x);
+    // Otherwise try to get this converted to a hex string
+    if (isNumber) {
+      // If this is a number or a base-10 number string, convert it to hex
+      x = `${new BN(x).toString(16)}`;
+    } else if (typeof x === 'string' && x.slice(0, 2) === '0x') {
+      x = x.slice(2);
+    } else {
+      x = x.toString('hex')
+    }
+    if (x.length % 2 > 0) x = `0${x}`;
+    if (x === '00' && !isNumber)
+      return Buffer.alloc(0);
+    return Buffer.from(x, 'hex');
+  } catch (err) {
+    throw new Error(`Cannot convert ${x.toString()} to hex buffer (${err.toString()})`);
+  }
+}
+
 module.exports = {
   isValidAssetPath,
   ensureHexBuffer,
-  signReqResolver,
+  buildSignerPathBuf,
+  getExtraData,
+  splitFrames,
   aes256_decrypt,
   aes256_encrypt,
   parseDER,

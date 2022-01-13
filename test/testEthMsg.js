@@ -44,7 +44,7 @@ function buildRandomMsg(type='signPersonal') {
     // A random string will do
     const isHexStr = randInt(2) > 0 ? true : false;
     const fwConstants = constants.getFwVersionConst(client.fwVersion);
-    const L = randInt(fwConstants.ethMaxDataSz - MSG_PAYLOAD_METADATA_SZ);
+    const L = randInt(fwConstants.maxTxDataSz - MSG_PAYLOAD_METADATA_SZ);
     if (isHexStr)
       return `0x${crypto.randomBytes(L).toString('hex')}`; // Get L hex bytes (represented with a string with 2*L chars)
     else
@@ -146,7 +146,7 @@ describe('Test ETH personalSign', function() {
     // `personal_sign` requests have a max size smaller than other requests because a header
     // is displayed in the text region of the screen. The size of this is captured
     // by `fwConstants.personalSignHeaderSz`.
-    const maxMsgSz =  (fwConstants.ethMaxMsgSz - metadataSz - fwConstants.personalSignHeaderSz) + 
+    const maxMsgSz =  (fwConstants.maxTxDataSz - metadataSz - fwConstants.personalSignHeaderSz) + 
                       (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
     const maxValid = `0x${crypto.randomBytes(maxMsgSz).toString('hex')}`;
     const minInvalid = `0x${crypto.randomBytes(maxMsgSz+1).toString('hex')}`;

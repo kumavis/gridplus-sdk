@@ -239,7 +239,7 @@ function createDef() {
   const data = helpers.ensureHexBuffer(buildEthData(def));
   // Make sure the transaction will fit in the firmware buffer size
   const fwConstants = constants.getFwVersionConst(client.fwVersion)
-  const maxDataSz = fwConstants.ethMaxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
+  const maxDataSz = fwConstants.maxTxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
   if (data.length > maxDataSz)
     return createDef();
   return def;
@@ -305,7 +305,7 @@ function createTupleDef() {
   def._typeNames = getTypeNames(def.params.slice(0, def.params.length - numTupleParams));
   // Make sure the transaction will fit in the firmware buffer size
   const fwConstants = constants.getFwVersionConst(client.fwVersion)
-  const maxDataSz = fwConstants.ethMaxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
+  const maxDataSz = fwConstants.maxTxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
   def.sig = buildFuncSelector(def);
   const data = helpers.ensureHexBuffer(buildEthData(def));
   if (data.length > maxDataSz)
