@@ -3,7 +3,10 @@ const bip39 = require('bip39');
 const bitcoin = require('bitcoinjs-lib');
 const crypto = require('crypto');
 const expect = require('chai').expect;
+const ethersAbi = require('@ethersproject/abi');
 const ethutil = require('ethereumjs-util');
+const randomWords = require('random-words');
+const abi = require('../../src/ethereumAbi');
 const Sdk = require('../../index.js');
 const constants = require('../../src/constants');
 const util = require('../../src/util')
@@ -716,4 +719,268 @@ exports.buildRandomEip712Object = function(randInt) {
     }
   })
   return msg
+}
+
+//---------------------------------------------------
+// ABI def builders
+//---------------------------------------------------
+const uintTypes = ['uint8', 'uint16', 'uint32', 'uint64', 'uint128', 'uint256'];
+
+function generateName(numChars) {
+  const words = randomWords({ min: 1, max: numChars/4, join: '_'})
+  return words.slice(0, numChars);
+}
+
+function randInt(n, prng) {
+  if (!prng)
+    console.trace('no prng')
+  return Math.floor(n * prng.quick());
+}
+
+function isNumType(type) {
+  return uintTypes.indexOf(type) > -1;
+}
+
+function randNumVal(type, prng) {
+  switch (type) {
+    case 'uint8':
+      return '0x' + crypto.randomBytes(1).toString('hex')
+    case 'uint16':
+      return '0x' + crypto.randomBytes(1 + randInt(1, prng)).toString('hex')
+    case 'uint24':
+      return '0x' + crypto.randomBytes(1 + randInt(2, prng)).toString('hex')
+    case 'uint32':
+      return '0x' + crypto.randomBytes(1 + randInt(3, prng)).toString('hex')
+    case 'uint64':
+      return '0x' + crypto.randomBytes(1 + randInt(7, prng)).toString('hex')
+    case 'uint128':
+      return '0x' + crypto.randomBytes(1 + randInt(15, prng)).toString('hex')
+    case 'uint256':
+      return '0x' + crypto.randomBytes(1 + randInt(31, prng)).toString('hex')
+    default:
+      throw new Error('Unsupported type: ', type)
+  }
+}
+
+function randBool(prng) {
+  return randInt(2, prng) > 0
+}
+
+function randAddress() {
+  return `0x${crypto.randomBytes(20).toString('hex')}`;
+}
+
+function randBytes(type, prng) {
+  const fixedSz = parseInt(type.slice(5));
+  if (isNaN(fixedSz)) {
+    return crypto.randomBytes(1 + randInt(99, prng)); // up to 100 bytes of random data
+  } else {
+    return crypto.randomBytes(fixedSz); // Fixed number of bytes
+  }
+}
+
+function randString(prng) {
+  return generateName(1+randInt(99, prng)); // Up to a 100 character string
+}
+
+function getRandType(prng) {
+  const i = randInt(7, prng);
+  switch (i) {
+    case 0:
+      return 'address';
+    case 1:
+      return 'bool';
+    case 2: // uint types
+      return uintTypes[randInt(uintTypes.length, prng)];
+    case 3: // fixed bytes types (bytes1-31)
+      return `bytes${1+ randInt(31, prng)}`
+    case 4: // bytes32 (this one is common so we want to give it moreweight)
+      return 'bytes32';
+    case 5:
+      return 'bytes';
+    case 6:
+      return 'string';
+  }
+}
+
+function genRandParam(prng, _type=null) {
+  const type = _type === null ? getRandType(prng) : _type;
+  const d = {
+    name: null,
+    type,
+    isArray: randBool(prng),
+    arraySz: 0,
+    latticeTypeIdx: constants.ETH_ABI_LATTICE_FW_TYPE_MAP[type],
+  }
+  if (d.isArray && randBool(prng))
+    d.arraySz = randInt(10, prng);
+  d.name = d.type;
+  if (d.isArray) {
+    d.name += '[';
+    if (d.arraySz > 0)
+      d.name += d.arraySz;
+    d.name += ']';
+  }
+  return d;
+}
+
+function genRandVal(type, prng) {  
+  if (isNumType(type))
+    return randNumVal(type, prng) || 0;
+  else if (type === 'address')
+    return randAddress();
+  else if (type === 'bool')
+    return randBool(prng);
+  else if (type === 'string')
+    return randString(prng);
+  else if (type.slice(0, 5) === 'bytes')
+    return randBytes(type, prng);
+  throw new Error('Unsupported type: ', type)
+}
+
+function getCanonicalType(type) {
+  if (type === 'uint' || type.indexOf('uint[') > -1)
+    return type.replace('uint', 'uint256');
+  else if (type === 'int' || type.indexOf('int[') > -1)
+    return type.replace('int', 'int256')
+  return type
+}
+
+function paramToVal(param, prng) {
+  if (param.isArray) {
+    const val = [];
+    const sz = param.arraySz === 0 ? Math.max(1, randInt(10, prng)) : param.arraySz;
+    for (let j = 0; j < sz; j++) {
+      val.push(genRandVal(param.type, prng))
+    }
+    return val;
+  } else {
+    return genRandVal(param.type, prng);
+  }
+}
+
+exports.buildFuncSelector = function(def) {
+  const repurposedData = {
+    name: def.name,
+    inputs: [],
+  };
+  for (let i = 0; i < def._typeNames.length; i++) {
+    // Convert to canonical type, if needed
+    repurposedData.inputs.push({ type: getCanonicalType(def._typeNames[i]) })
+  }
+  return abi.getFuncSig(repurposedData);
+}
+
+exports.getTypeNames = function(params) {
+  const typeNames = [];
+  params.forEach((param) => {
+    let typeName = getCanonicalType(param.type);
+    if (param.isArray) {
+      typeName += '[';
+      if (param.arraySz > 0)
+        typeName += param.arraySz;
+      typeName += ']';
+    }
+    typeNames.push(typeName);
+  });
+  return typeNames
+}
+
+exports.buildEthData = function(def) {
+  const encoder = new ethersAbi.AbiCoder;
+  const encoded = encoder.encode(def._typeNames, def._vals);
+  return `0x${def.sig}${encoded.slice(2)}`
+}
+
+exports.createDef = function(client, prng) {
+  const def = {
+    name: `function_${randInt(5000000, prng)}`,
+    sig: null,
+    params: [],
+    _vals: [],
+  }
+  const sz = randInt(10, prng)
+  for (let i = 0; i < sz; i++) {
+    const param = genRandParam(prng);
+    def.params.push(param)
+    def._vals.push(paramToVal(param, prng))
+  }
+  def._typeNames = exports.getTypeNames(def.params);
+  def.sig = exports.buildFuncSelector(def);
+  const data = exports.ensureHexBuffer(exports.buildEthData(def));
+  // Make sure the transaction will fit in the firmware buffer size
+  const fwConstants = constants.getFwVersionConst(client.fwVersion)
+  const maxDataSz = fwConstants.ethMaxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
+  if (data.length > maxDataSz)
+    return exports.createDef(client, prng);
+  console.log(def)
+  return def;
+}
+
+exports.createTupleDef = function(client, prng) {
+  const def = {
+    name: `tupleFunc_${randInt(500000, prng)}`,
+    sig: null,
+    params: [],
+    _vals: []
+  }
+  let numTupleParams = 0;
+  const numTuples = (1+randInt(2, prng));
+  const tupleParams = []
+  for (let i = 0; i < numTuples; i++) {
+    const thisTupleParams = []
+    for (let j = 0; j < (1+randInt(3, prng)); j++) {
+      thisTupleParams.push(genRandParam(prng))
+      numTupleParams++
+    }
+    let tupleStr = '('
+    thisTupleParams.forEach((param, i) => {
+      tupleStr += `${param.name}${i === thisTupleParams.length - 1 ? '' : ','}`
+    })
+    tupleStr += ')'
+    const thisTuple = genRandParam(prng, tupleStr)
+    thisTuple.latticeTypeIdx = constants.ETH_ABI_LATTICE_FW_TYPE_MAP[`tuple${thisTupleParams.length}`]
+    def.params.push(thisTuple)
+    // Vals
+    const thisTupleVals = []
+    if (thisTuple.isArray) {
+      const sz = thisTuple.arraySz === 0 ? (1+randInt(3, prng)) : thisTuple.arraySz;
+      for (let i = 0; i < sz; i++) {
+        const nestedVals = []
+        thisTupleParams.forEach((param) => {
+          nestedVals.push(paramToVal(param, prng))
+        })
+        thisTupleVals.push(nestedVals)
+      }
+    } else {
+      thisTupleParams.forEach((param) => {
+        thisTupleVals.push(paramToVal(param, prng))
+      })
+    }
+    def._vals.push(thisTupleVals)
+    tupleParams.push(thisTupleParams)
+  }
+  const numOther = randInt(10 - numTuples - numTupleParams, prng);
+  for (let i = 0; i < numOther; i++) {
+    const param = genRandParam(prng);
+    def.params.push(param);
+    def._vals.push(paramToVal(param, prng));
+  }
+
+  // Add the remaining tuple params
+  for (let i = 0; i < tupleParams.length; i++) {
+    for (let j = 0; j < tupleParams[i].length; j++) {
+      def.params.push(tupleParams[i][j])
+    }
+  }
+
+  def._typeNames = exports.getTypeNames(def.params.slice(0, def.params.length - numTupleParams));
+  // Make sure the transaction will fit in the firmware buffer size
+  const fwConstants = constants.getFwVersionConst(client.fwVersion)
+  const maxDataSz = fwConstants.ethMaxDataSz + (fwConstants.extraDataMaxFrames * fwConstants.extraDataFrameSz);
+  def.sig = exports.buildFuncSelector(def);
+  const data = exports.ensureHexBuffer(exports.buildEthData(def));
+  if (data.length > maxDataSz)
+    return exports.createTupleDef(client, prng);
+  return def;
 }
