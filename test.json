@@ -1,0 +1,2457 @@
+{
+	"id": 0,
+	"name": "gridplus-sdk",
+	"kind": 1,
+	"kindString": "Project",
+	"flags": {},
+	"originalName": "",
+	"children": [
+		{
+			"id": 1,
+			"name": "Client",
+			"kind": 128,
+			"kindString": "Class",
+			"flags": {},
+			"children": [
+				{
+					"id": 2,
+					"name": "constructor",
+					"kind": 512,
+					"kindString": "Constructor",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 75,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 3,
+							"name": "new Client",
+							"kind": 16384,
+							"kindString": "Constructor signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 4,
+									"name": "__namedParameters",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"name": "ClientParams"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"id": 1,
+								"name": "Client"
+							}
+						}
+					]
+				},
+				{
+					"id": 16,
+					"name": "activeWallets",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 60,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reflection",
+						"declaration": {
+							"id": 17,
+							"name": "__type",
+							"kind": 65536,
+							"kindString": "Type literal",
+							"flags": {},
+							"children": [
+								{
+									"id": 24,
+									"name": "external",
+									"kind": 1024,
+									"kindString": "Property",
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "client.ts",
+											"line": 66,
+											"character": 7
+										}
+									],
+									"type": {
+										"type": "reflection",
+										"declaration": {
+											"id": 25,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 28,
+													"name": "capabilities",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "client.ts",
+															"line": 69,
+															"character": 6
+														}
+													],
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													}
+												},
+												{
+													"id": 29,
+													"name": "external",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "client.ts",
+															"line": 70,
+															"character": 6
+														}
+													],
+													"type": {
+														"type": "intrinsic",
+														"name": "boolean"
+													}
+												},
+												{
+													"id": 27,
+													"name": "name",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "client.ts",
+															"line": 68,
+															"character": 6
+														}
+													],
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													}
+												},
+												{
+													"id": 26,
+													"name": "uid",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "client.ts",
+															"line": 67,
+															"character": 6
+														}
+													],
+													"type": {
+														"type": "reference",
+														"qualifiedName": "Buffer",
+														"package": "buffer",
+														"name": "Buffer"
+													}
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														28,
+														29,
+														27,
+														26
+													]
+												}
+											]
+										}
+									}
+								},
+								{
+									"id": 18,
+									"name": "internal",
+									"kind": 1024,
+									"kindString": "Property",
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "client.ts",
+											"line": 61,
+											"character": 4
+										}
+									],
+									"type": {
+										"type": "reflection",
+										"declaration": {
+											"id": 19,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 22,
+													"name": "capabilities",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "client.ts",
+															"line": 64,
+															"character": 6
+														}
+													],
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													}
+												},
+												{
+													"id": 23,
+													"name": "external",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "client.ts",
+															"line": 65,
+															"character": 6
+														}
+													],
+													"type": {
+														"type": "intrinsic",
+														"name": "boolean"
+													}
+												},
+												{
+													"id": 21,
+													"name": "name",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "client.ts",
+															"line": 63,
+															"character": 6
+														}
+													],
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													}
+												},
+												{
+													"id": 20,
+													"name": "uid",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "client.ts",
+															"line": 62,
+															"character": 6
+														}
+													],
+													"type": {
+														"type": "reference",
+														"qualifiedName": "Buffer",
+														"package": "buffer",
+														"name": "Buffer"
+													}
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														22,
+														23,
+														21,
+														20
+													]
+												}
+											]
+										}
+									}
+								}
+							],
+							"groups": [
+								{
+									"title": "Properties",
+									"kind": 1024,
+									"children": [
+										24,
+										18
+									]
+								}
+							]
+						}
+					}
+				},
+				{
+					"id": 5,
+					"name": "baseUrl",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 49,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 6,
+					"name": "crypto",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 50,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 13,
+					"name": "deviceId",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 57,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 10,
+					"name": "ephemeralPub",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 54,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 14,
+					"name": "isPaired",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 58,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "boolean"
+					}
+				},
+				{
+					"id": 9,
+					"name": "key",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 53,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 7,
+					"name": "name",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 51,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 30,
+					"name": "pairingSalt",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 73,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 8,
+					"name": "privKey",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 52,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 15,
+					"name": "retryCount",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 59,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 11,
+					"name": "sharedSecret",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 55,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 12,
+					"name": "timeout",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 56,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "any"
+					}
+				},
+				{
+					"id": 85,
+					"name": "_buildEncRequest",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 703,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 86,
+							"name": "_buildEncRequest",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 87,
+									"name": "enc_request_code",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 88,
+									"name": "payload",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"qualifiedName": "Buffer",
+								"package": "buffer",
+								"name": "Buffer"
+							}
+						}
+					]
+				},
+				{
+					"id": 89,
+					"name": "_buildRequest",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 738,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 90,
+							"name": "_buildRequest",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 91,
+									"name": "request_code",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 92,
+									"name": "payload",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"qualifiedName": "Buffer",
+								"package": "buffer",
+								"name": "Buffer"
+							}
+						}
+					]
+				},
+				{
+					"id": 77,
+					"name": "_getActiveWallet",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 659,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 78,
+							"name": "_getActiveWallet",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 79,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 80,
+									"name": "forceRefresh",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "boolean"
+									},
+									"defaultValue": "false"
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 83,
+					"name": "_getEphemId",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 695,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 84,
+							"name": "_getEphemId",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 81,
+					"name": "_getSharedSecret",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 683,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 82,
+							"name": "_getSharedSecret",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"type": {
+								"type": "reference",
+								"qualifiedName": "Buffer",
+								"package": "buffer",
+								"name": "Buffer"
+							}
+						}
+					]
+				},
+				{
+					"id": 98,
+					"name": "_handleConnect",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 833,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 99,
+							"name": "_handleConnect",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 100,
+									"name": "res",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "boolean"
+							}
+						}
+					]
+				},
+				{
+					"id": 101,
+					"name": "_handleEncResponse",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 852,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 102,
+							"name": "_handleEncResponse",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 103,
+									"name": "encRes",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 104,
+									"name": "len",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "union",
+								"types": [
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 105,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 107,
+													"name": "data",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "undefined"
+													},
+													"defaultValue": "res"
+												},
+												{
+													"id": 106,
+													"name": "err",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "string"
+													},
+													"defaultValue": "..."
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														107,
+														106
+													]
+												}
+											]
+										}
+									},
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 108,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 110,
+													"name": "data",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "reference",
+														"qualifiedName": "Buffer",
+														"package": "buffer",
+														"name": "Buffer"
+													},
+													"defaultValue": "res"
+												},
+												{
+													"id": 109,
+													"name": "err",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													},
+													"defaultValue": "null"
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														110,
+														109
+													]
+												}
+											]
+										}
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					"id": 114,
+					"name": "_handleGetAddresses",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 894,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 115,
+							"name": "_handleGetAddresses",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 116,
+									"name": "encRes",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "union",
+								"types": [
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 117,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 119,
+													"name": "data",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "undefined"
+													},
+													"defaultValue": "res"
+												},
+												{
+													"id": 118,
+													"name": "err",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "string"
+													},
+													"defaultValue": "..."
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														119,
+														118
+													]
+												}
+											]
+										}
+									},
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 120,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 122,
+													"name": "data",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "reference",
+														"qualifiedName": "Buffer",
+														"package": "buffer",
+														"name": "Buffer"
+													},
+													"defaultValue": "res"
+												},
+												{
+													"id": 121,
+													"name": "err",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													},
+													"defaultValue": "null"
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														122,
+														121
+													]
+												}
+											]
+										}
+									},
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 123,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 124,
+													"name": "data",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "array",
+														"elementType": {
+															"type": "intrinsic",
+															"name": "any"
+														}
+													},
+													"defaultValue": "addrs"
+												},
+												{
+													"id": 125,
+													"name": "err",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													},
+													"defaultValue": "null"
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														124,
+														125
+													]
+												}
+											]
+										}
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					"id": 126,
+					"name": "_handleGetWallets",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 916,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 127,
+							"name": "_handleGetWallets",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 128,
+									"name": "encRes",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "union",
+								"types": [
+									{
+										"type": "literal",
+										"value": "No active wallet."
+									},
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 129,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 131,
+													"name": "data",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "undefined"
+													},
+													"defaultValue": "res"
+												},
+												{
+													"id": 130,
+													"name": "err",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "string"
+													},
+													"defaultValue": "..."
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														131,
+														130
+													]
+												}
+											]
+										}
+									},
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 132,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 134,
+													"name": "data",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "reference",
+														"qualifiedName": "Buffer",
+														"package": "buffer",
+														"name": "Buffer"
+													},
+													"defaultValue": "res"
+												},
+												{
+													"id": 133,
+													"name": "err",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													},
+													"defaultValue": "null"
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														134,
+														133
+													]
+												}
+											]
+										}
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					"id": 111,
+					"name": "_handlePair",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 884,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 112,
+							"name": "_handlePair",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 113,
+									"name": "encRes",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 135,
+					"name": "_handleSign",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 956,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 136,
+							"name": "_handleSign",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 137,
+									"name": "encRes",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 138,
+									"name": "currencyType",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 139,
+									"name": "req",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									},
+									"defaultValue": "null"
+								}
+							],
+							"type": {
+								"type": "union",
+								"types": [
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 140,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 142,
+													"name": "data",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													},
+													"defaultValue": "null"
+												},
+												{
+													"id": 141,
+													"name": "err",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													},
+													"defaultValue": "null"
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														142,
+														141
+													]
+												}
+											]
+										}
+									},
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 143,
+											"name": "__type",
+											"kind": 65536,
+											"kindString": "Type literal",
+											"flags": {},
+											"children": [
+												{
+													"id": 144,
+													"name": "err",
+													"kind": 1024,
+													"kindString": "Property",
+													"flags": {},
+													"type": {
+														"type": "intrinsic",
+														"name": "any"
+													},
+													"defaultValue": "decrypted.err"
+												}
+											],
+											"groups": [
+												{
+													"title": "Properties",
+													"kind": 1024,
+													"children": [
+														144
+													]
+												}
+											]
+										}
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					"id": 93,
+					"name": "_request",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 764,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 94,
+							"name": "_request",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 95,
+									"name": "data",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 96,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 97,
+									"name": "retryCount",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									},
+									"defaultValue": "..."
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 145,
+					"name": "_resetActiveWallets",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 1105,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 146,
+							"name": "_resetActiveWallets",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				},
+				{
+					"id": 56,
+					"name": "addAbiDefs",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 358,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 57,
+							"name": "addAbiDefs",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 58,
+									"name": "defs",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 59,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 60,
+									"name": "nextCode",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									},
+									"defaultValue": "null"
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 69,
+					"name": "addKvRecords",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 521,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 70,
+							"name": "addKvRecords",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 71,
+									"name": "opts",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 72,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 61,
+					"name": "addPermissionV0",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 391,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 62,
+							"name": "addPermissionV0",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 63,
+									"name": "opts",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 64,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 31,
+					"name": "connect",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 125,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 32,
+							"name": "connect",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 33,
+									"name": "deviceId",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 34,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 47,
+					"name": "fwVersion",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 274,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 48,
+							"name": "fwVersion",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 49,
+									"name": "fwVersion",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				},
+				{
+					"id": 147,
+					"name": "getActiveWallet",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 1115,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 148,
+							"name": "getActiveWallet",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"type": {
+								"type": "reflection",
+								"declaration": {
+									"id": 149,
+									"name": "__type",
+									"kind": 65536,
+									"kindString": "Type literal",
+									"flags": {},
+									"children": [
+										{
+											"id": 152,
+											"name": "capabilities",
+											"kind": 1024,
+											"kindString": "Property",
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "client.ts",
+													"line": 64,
+													"character": 6
+												}
+											],
+											"type": {
+												"type": "intrinsic",
+												"name": "any"
+											}
+										},
+										{
+											"id": 153,
+											"name": "external",
+											"kind": 1024,
+											"kindString": "Property",
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "client.ts",
+													"line": 65,
+													"character": 6
+												}
+											],
+											"type": {
+												"type": "intrinsic",
+												"name": "boolean"
+											}
+										},
+										{
+											"id": 151,
+											"name": "name",
+											"kind": 1024,
+											"kindString": "Property",
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "client.ts",
+													"line": 63,
+													"character": 6
+												}
+											],
+											"type": {
+												"type": "intrinsic",
+												"name": "any"
+											}
+										},
+										{
+											"id": 150,
+											"name": "uid",
+											"kind": 1024,
+											"kindString": "Property",
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "client.ts",
+													"line": 62,
+													"character": 6
+												}
+											],
+											"type": {
+												"type": "reference",
+												"qualifiedName": "Buffer",
+												"package": "buffer",
+												"name": "Buffer"
+											}
+										}
+									],
+									"groups": [
+										{
+											"title": "Properties",
+											"kind": 1024,
+											"children": [
+												152,
+												153,
+												151,
+												150
+											]
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"id": 43,
+					"name": "getAddresses",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 210,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 44,
+							"name": "getAddresses",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 45,
+									"name": "opts",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 46,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 65,
+					"name": "getKvRecords",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 444,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 66,
+							"name": "getKvRecords",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 67,
+									"name": "opts",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 68,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 154,
+					"name": "hasActiveWallet",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 1125,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 155,
+							"name": "hasActiveWallet",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"type": {
+								"type": "intrinsic",
+								"name": "boolean"
+							}
+						}
+					]
+				},
+				{
+					"id": 35,
+					"name": "pair",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 153,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 36,
+							"name": "pair",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 37,
+									"name": "pairingSecret",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 38,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 159,
+					"name": "parseAbi",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 1147,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 160,
+							"name": "parseAbi",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 161,
+									"name": "source",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 162,
+									"name": "data",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 163,
+									"name": "skipErrors",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "boolean"
+									},
+									"defaultValue": "false"
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 156,
+					"name": "pubKeyBytes",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 1131,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 157,
+							"name": "pubKeyBytes",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 158,
+									"name": "LE",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "boolean"
+									},
+									"defaultValue": "false"
+								}
+							],
+							"type": {
+								"type": "reference",
+								"qualifiedName": "Buffer",
+								"package": "buffer",
+								"name": "Buffer"
+							}
+						}
+					]
+				},
+				{
+					"id": 73,
+					"name": "removeKvRecords",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 609,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 74,
+							"name": "removeKvRecords",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 75,
+									"name": "opts",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 76,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 50,
+					"name": "sign",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 278,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 51,
+							"name": "sign",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 52,
+									"name": "opts",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 53,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 54,
+									"name": "cachedData",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									},
+									"defaultValue": "null"
+								},
+								{
+									"id": 55,
+									"name": "nextCode",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									},
+									"defaultValue": "null"
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				},
+				{
+					"id": 39,
+					"name": "test",
+					"kind": 2048,
+					"kindString": "Method",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "client.ts",
+							"line": 193,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 40,
+							"name": "test",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 41,
+									"name": "data",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								},
+								{
+									"id": 42,
+									"name": "cb",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "any"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "any"
+							}
+						}
+					]
+				}
+			],
+			"groups": [
+				{
+					"title": "Constructors",
+					"kind": 512,
+					"children": [
+						2
+					]
+				},
+				{
+					"title": "Properties",
+					"kind": 1024,
+					"children": [
+						16,
+						5,
+						6,
+						13,
+						10,
+						14,
+						9,
+						7,
+						30,
+						8,
+						15,
+						11,
+						12
+					]
+				},
+				{
+					"title": "Methods",
+					"kind": 2048,
+					"children": [
+						85,
+						89,
+						77,
+						83,
+						81,
+						98,
+						101,
+						114,
+						126,
+						111,
+						135,
+						93,
+						145,
+						56,
+						69,
+						61,
+						31,
+						47,
+						147,
+						43,
+						65,
+						154,
+						35,
+						159,
+						156,
+						73,
+						50,
+						39
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "client.ts",
+					"line": 48,
+					"character": 13
+				}
+			]
+		}
+	],
+	"groups": [
+		{
+			"title": "Classes",
+			"kind": 128,
+			"children": [
+				1
+			]
+		}
+	],
+	"sources": [
+		{
+			"fileName": "index.ts",
+			"line": 1,
+			"character": 0
+		}
+	]
+}

@@ -53,6 +53,7 @@
     "bitcoinjs-lib": "4.0.3",
     "chai": "^4.2.0",
     "cli-interact": "^0.1.9",
+    "docusaurus-plugin-typedoc": "^0.16.7",
     "eslint": "^8.7.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.25.4",
@@ -69,6 +70,8 @@
     "rlp": "^2.2.7",
     "seedrandom": "^3.0.5",
     "ts-mocha": "^9.0.2",
+    "typedoc": "^0.22.11",
+    "typedoc-plugin-markdown": "^3.11.12",
     "typescript": "^4.5.4"
   },
   "files": [
