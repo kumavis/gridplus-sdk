@@ -15,14 +15,14 @@ The documentation for this SDK can be found [here](https://gridplus-sdk.readthed
 
 If you have a Lattice1 device that is connected to the internet, you can run the full test suite with:
 
-```sh
+```bash
 npm test
 ```
 
 If you would like to run tests multiple times, you will need to re-pair with a fresh, random key pair using the above command.
 If you instead wish to quickly test non-pairing items, consider the following setup:
 
-```sh
+```bash
 # Pair with a hardcoded, re-usable test key. You only need to do this ONCE!
 env REUSE_KEY=1 npm test
 
@@ -48,7 +48,7 @@ Ethereum tests include both boundary checks on transaction params and randomized
 
 Run the suite with:
 
-```sh
+```bash
 env DEVICE_ID='my_device_id' npm run test-eth
 ```
 
@@ -67,7 +67,7 @@ Bitcoin tests cover legacy, wrapped segwit, and segwit spending to all address t
 
 Run the tests with:
 
-```sh
+```bash
 env DEVICE_ID='my_device_id' npm run test-btc
 ```
 
@@ -75,7 +75,7 @@ env DEVICE_ID='my_device_id' npm run test-btc
 
 You may test functionality around loading Ethereum ABI definitions and displaying calldata in a markdwon screen with the following script:
 
-```sh
+```bash
 env DEVICE_ID='my_device_id' N=<numRandomTests> npm run test-eth-abi
 ```
 
@@ -91,6 +91,6 @@ We can test debug firmware builds using the `client.test` function in the SDK. T
 
 Lattice firmware uses "wallet jobs" to interact with the SafeCard/Lattice wallet directly. The SDK does not have access to these methods in production builds, but for debug builds the test harness can be used to interact with them.
 
-```sh
+```bash
 env DEVICE_ID='my_device_id' npm run test-wallet-jobs
 ```
