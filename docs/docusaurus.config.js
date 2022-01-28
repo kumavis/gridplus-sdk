@@ -6,7 +6,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/palenight");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "gridplus-sdk",
+  title: "GridPlus SDK",
   tagline: "Be the connection",
   url: "https://gridplus.io",
   baseUrl: "/",
@@ -26,6 +26,7 @@ const config = {
         tsconfig: "../tsconfig.json",
         watch: process.env.TYPEDOC_WATCH,
         excludeInternal: true,
+        excludePrivate: true,
         readme: "none",
       },
     ],

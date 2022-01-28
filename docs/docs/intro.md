@@ -1,6 +1,6 @@
 ---
 id: "index"
-title: "gridplus-sdk"
+title: "Introduction"
 slug: "intro"
 sidebar_label: "Introduction"
 sidebar_position: 0

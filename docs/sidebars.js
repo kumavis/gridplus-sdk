@@ -21,10 +21,6 @@ const sidebars = {
     },
     {
       type: "doc",
-      id: "getting-started",
-    },
-    {
-      type: "doc",
       id: "testing",
     },
     {
