@@ -22,7 +22,7 @@ const config = {
       // Plugin / TypeDoc options
       {
         entryPoints: ["../src"],
-        entryPointStrategy: "expand",
+        // entryPointStrategy: "expand",
         tsconfig: "../tsconfig.json",
         watch: process.env.TYPEDOC_WATCH,
         excludeInternal: true,
@@ -64,12 +64,12 @@ const config = {
             position: "left",
             label: "Docs",
           },
-          {
-            type: "doc",
-            docId: "index",
-            position: "left",
-            label: "API",
-          },
+          // {
+          //   type: "docSidebar",
+          //   position: "left",
+          //   sidebarId: "api",
+          //   label: "API",
+          // },
           {
             href: "https://github.com/gridplus/gridplus-sdk",
             label: "GitHub",
@@ -80,15 +80,6 @@ const config = {
       footer: {
         style: "dark",
         links: [
-          {
-            title: "Docs",
-            items: [
-              {
-                label: "Tutorial",
-                to: "/docs/getting-started",
-              },
-            ],
-          },
           {
             title: "Community",
             items: [
@@ -120,7 +111,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} GridPlus, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} GridPlus, Inc.`,
       },
       prism: {
         theme: lightCodeTheme,
