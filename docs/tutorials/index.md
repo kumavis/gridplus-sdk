@@ -1,3 +1,7 @@
+---
+title: Markdown page example
+---
+
 # GridPlus SDK
 
 The [GridPlus SDK](https://github.com/GridPlus/gridplus-sdk) allows any application to establish a connection and interact with a GridPlus Lattice device. 

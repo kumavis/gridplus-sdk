@@ -2,29 +2,31 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/dracula");
+const darkCodeTheme = require("prism-react-renderer/themes/palenight");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "My Site",
-  tagline: "Dinosaurs are cool",
-  url: "https://your-docusaurus-test-site.com",
+  title: "gridplus-sdk",
+  tagline: "Be the connection",
+  url: "https://gridplus.io",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
-  organizationName: "facebook", // Usually your GitHub org/user name.
-  projectName: "docusaurus", // Usually your repo name.
+  favicon: "img/logo.jpeg",
+  organizationName: "gridplus",
+  projectName: "gridplus-sdk",
   plugins: [
     [
       "docusaurus-plugin-typedoc",
 
       // Plugin / TypeDoc options
       {
-        entryPoints: ["../src/index.ts"],
+        entryPoints: ["../src"],
+        entryPointStrategy: "expand",
         tsconfig: "../tsconfig.json",
-        out: "./",
         watch: process.env.TYPEDOC_WATCH,
+        excludeInternal: true,
+        readme: "none",
       },
     ],
   ],
@@ -36,14 +38,8 @@ const config = {
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
-          editUrl:
-            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
-        },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          editUrl:
-            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
+          editUrl: "https://github.com/gridplus/gridplus-sdk",
+          remarkPlugins: [require("mdx-mermaid")],
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -56,21 +52,26 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: "My Site",
+        title: "",
         logo: {
-          alt: "My Site Logo",
-          src: "img/logo.svg",
+          alt: "Gridplus Logo",
+          src: "img/logo.png",
         },
         items: [
           {
             type: "doc",
             docId: "index",
             position: "left",
+            label: "Docs",
+          },
+          {
+            type: "doc",
+            docId: "index",
+            position: "left",
             label: "API",
           },
-          { to: "/blog", label: "Blog", position: "left" },
           {
-            href: "https://github.com/facebook/docusaurus",
+            href: "https://github.com/gridplus/gridplus-sdk",
             label: "GitHub",
             position: "right",
           },
@@ -84,7 +85,7 @@ const config = {
             items: [
               {
                 label: "Tutorial",
-                to: "/docs/intro",
+                to: "/docs/getting-started",
               },
             ],
           },
@@ -93,15 +94,15 @@ const config = {
             items: [
               {
                 label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
+                href: "https://stackoverflow.com/questions/tagged/gridplus",
               },
               {
                 label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
+                href: "https://discordapp.com/invite/gridplus",
               },
               {
                 label: "Twitter",
-                href: "https://twitter.com/docusaurus",
+                href: "https://twitter.com/gridplus",
               },
             ],
           },
@@ -110,16 +111,16 @@ const config = {
             items: [
               {
                 label: "Blog",
-                to: "/blog",
+                href: "https://blog.gridplus.io",
               },
               {
                 label: "GitHub",
-                href: "https://github.com/facebook/docusaurus",
+                href: "https://github.com/gridplus/gridplus-sdk",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} GridPlus, Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,
