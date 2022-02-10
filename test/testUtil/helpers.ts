@@ -3,7 +3,7 @@ import { wordlists } from 'bip39';
 import bitcoin from 'bitcoinjs-lib';
 import { expect as expect } from 'chai';
 import crypto from 'crypto';
-import { derivePath as deriveEDKey } from 'ed25519-hd-key'
+import { derivePath as deriveEDKey, getPublicKey as getEDPubkey } from 'ed25519-hd-key'
 import { ec as EC, eddsa as EdDSA } from 'elliptic';
 import { privateToAddress } from 'ethereumjs-util';
 import { keccak256 } from 'js-sha3';
@@ -329,6 +329,24 @@ export const harden = (x) => {
   return x + HARDENED_OFFSET;
 };
 
+export const prandomBuf = function(prng, maxSz, forceSize=false) {
+  // Build a random payload that can fit in the base request
+  const sz = forceSize ? maxSz : Math.floor(maxSz * prng.quick());
+  const buf = Buffer.alloc(sz);
+  for (let i = 0; i < sz; i++) {
+    buf[i] = Math.floor(0xff * prng.quick());
+  }
+  return buf;
+}
+
+export const deriveED25519Key = function(path, seed) {
+  const { key } = deriveEDKey(getPathStr(path), seed);
+  const pub = getEDPubkey(key);
+  return {
+    priv: key,
+    pub,
+  }
+}
 
 //============================================================
 // Wallet Job integration test helpers
@@ -502,7 +520,6 @@ export const getPathStr = function(path) {
   });
   return pathStr;
 }
-
 
 //---------------------------------------------------
 // Get Addresses helpers
@@ -872,7 +889,7 @@ export const validateGenericSig = function(seed, sig, data) {
     if (hashType !== 'NONE') {
       throw new Error('Bad params');
     }
-    const { key: priv } = deriveEDKey(getPathStr(signerPath), seed);
+    const { priv } = deriveED25519Key(signerPath, seed)
     const key = ed25519.keyFromSecret(priv);
     const formattedSig = `${sig.r.toString('hex')}${sig.s.toString('hex')}`
     expect(key.verify(payloadBuf, formattedSig)).to.equal(true, 'Signature failed verification.')
@@ -917,4 +934,6 @@ export default {
   serializeLoadSeedJobData,
   buildRandomEip712Object,
   validateGenericSig,
+  deriveED25519Key,
+  prandomBuf,
 }
