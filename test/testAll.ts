@@ -59,7 +59,6 @@ describe('Connect and Pair', () => {
     if (caughtErr === false) {
       const fwConstants = getFwVersionConst(client.fwVersion);
       const addrData = {
-        currency: 'BTC',
         startPath: [
           helpers.BTC_PURPOSE_P2SH_P2WPKH,
           helpers.BTC_COIN,
@@ -87,7 +86,6 @@ describe('Connect and Pair', () => {
       // If firmware supports it, try shorter paths
       if (fwConstants.flexibleAddrPaths) {
         const flexData = {
-          currency: 'ETH',
           startPath: [
             helpers.BTC_PURPOSE_P2PKH,
             helpers.ETH_COIN,
@@ -155,7 +153,25 @@ describe('Connect and Pair', () => {
       }
     }
   });
-
+/*
+  it('Should get addresses with nonstandard flags', async () => {
+    const fwConstants = getFwVersionConst(client.fwVersion);
+    const addrData = {
+      startPath: [
+        helpers.BTC_PURPOSE_P2SH_P2WPKH,
+        helpers.BTC_COIN,
+        HARDENED_OFFSET,
+        0,
+        0,
+      ],
+      n: 5,
+    };
+    let addrs;
+    addrs = await helpers.execute(client, 'getAddresses', addrData);
+    expect(addrs.length).to.equal(5);
+    expect(addrs[0][0]).to.equal('3');
+  })
+*/
   it('Should sign Ethereum transactions', async () => {
     // Constants from firmware
     const fwConstants = getFwVersionConst(client.fwVersion);

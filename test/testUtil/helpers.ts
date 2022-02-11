@@ -8,7 +8,9 @@ import { ec as EC, eddsa as EdDSA } from 'elliptic';
 import { privateToAddress } from 'ethereumjs-util';
 import { keccak256 } from 'js-sha3';
 import { sha256 } from 'hash.js/lib/hash/sha'
-import { ADDR_STR_LEN, BIP_CONSTANTS, ethMsgProtocol, HARDENED_OFFSET } from '../../src/constants';
+import { 
+  ADDR_STR_LEN, BIP_CONSTANTS, ethMsgProtocol, HARDENED_OFFSET, GET_ADDR_FLAGS, 
+} from '../../src/constants';
 import { Client } from '../../src/index';
 import { ensureHexBuffer, parseDER } from '../../src/util';
 const SIGHASH_ALL = 0x01;
@@ -341,7 +343,9 @@ export const prandomBuf = function(prng, maxSz, forceSize=false) {
 
 export const deriveED25519Key = function(path, seed) {
   const { key } = deriveEDKey(getPathStr(path), seed);
-  const pub = getEDPubkey(key);
+  // If `false` isn't added, the result will have a prefix `00` byte
+  // for some reason... We don't need that.
+  const pub = getEDPubkey(key, false);
   return {
     priv: key,
     pub,
@@ -544,7 +548,7 @@ export const serializeGetAddressesJobData = function (data) {
   req.writeUInt32LE(data.count, off);
   off += 4;
   // Deprecated skipCache flag. It isn't used by firmware anymore.
-  req.writeUInt8(1, off);
+  req.writeUInt8(data.flag || 0, off);
   return req;
 };
 
@@ -554,8 +558,10 @@ export const deserializeGetAddressesJobResult = function (res) {
     count: null,
     addresses: [],
   };
-  getAddrResult.count = res.readUInt32LE(off);
-  off += 4;
+  getAddrResult.pubOnly = res.readUint8(off);
+  off += 1;
+  getAddrResult.count = res.readUint8(off);
+  off += 3; // Skip a 2-byte empty shim value (for backwards compatibility)
   for (let i = 0; i < getAddrResult.count; i++) {
     const _addr = res.slice(off, off + ADDR_STR_LEN);
     off += ADDR_STR_LEN;
@@ -614,6 +620,30 @@ export const validateETHAddresses = function (resp, jobData, seed) {
     expect(addr).to.equal(resp.addresses[i - jobData.first]);
   }
 };
+
+export const validateDerivedPublicKeys = function(pubKeys, firstPath, seed, flag=null) {
+  const wallet = bip32.fromSeed(seed);
+  // We assume the keys were derived in sequential order
+  pubKeys.forEach((pub, i) => {
+    const path = JSON.parse(JSON.stringify(firstPath));
+    path[path.length - 1] += i;
+    if (flag === GET_ADDR_FLAGS.ED25519_PUB) {
+      // ED25519 requires its own derivation
+      const key = deriveED25519Key(path, seed);
+      expect(pub.toString('hex')) 
+      .to
+      .equal(key.pub.toString('hex'), 
+            'Exported ED25519 pubkey incorrect');
+    } else {
+      // Otherwise this is a SECP256K1 pubkey
+      const priv = wallet.derivePath(getPathStr(path)).privateKey;
+      expect(pub.toString('hex'))
+      .to
+      .equal( secp256k1.keyFromPrivate(priv).getPublic().encode('hex'),
+              'Exported SECP256K1 pubkey incorrect');
+    }
+  })
+}
 
 export const ethPersonalSignMsg = function(msg) {
   return '\u0019Ethereum Signed Message:\n' + String(msg.length) + msg;
@@ -925,6 +955,7 @@ export default {
   deserializeGetAddressesJobResult,
   validateBTCAddresses,
   validateETHAddresses,
+  validateDerivedPublicKeys,
   ethPersonalSignMsg,
   serializeSignTxJobDataLegacy,
   deserializeSignTxJobResult,
