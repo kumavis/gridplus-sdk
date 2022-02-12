@@ -289,9 +289,32 @@ const ethMsgProtocol = {
   },
 };
 
-const GET_ADDR_FLAGS = {
-  SECP256K1_PUB: 3,
-  ED25519_PUB: 4,
+//======================================================
+// EXTERNALLY EXPORTED CONSTANTS
+// These are used for building requests
+//======================================================
+export const EXTERNAL = {
+  // Optional flags for `getAddresses`
+  GET_ADDR_FLAGS: {
+    SECP256K1_PUB: 3,
+    ED25519_PUB: 4,
+  },
+  // Options for building general signing requests
+  SIGNING: {
+    HASHES: {
+      NONE: 0,
+      KECCAK256: 1,
+      SHA256: 2,
+    },
+    CURVES: {
+      SECP256K1: 0,
+      ED25519: 1
+    },
+    ENCODINGS: {
+      ASCII: 0,
+      HEX: 1
+    }
+  }
 }
 
 function getFwVersionConst(v) {
@@ -358,11 +381,14 @@ function getFwVersionConst(v) {
     c.genericSigning.baseReqSz = 1552;
     // See `GENERIC_SIGNING_BASE_MSG_SZ` in firmware
     c.genericSigning.baseDataSz = 1519;
-    c.genericSigning.hashTypes = [ 'NONE', 'KECCAK256', 'SHA256' ];
-    c.genericSigning.curveTypes = [ 'SECP256K1', 'ED25519' ];
-    c.genericSigning.encodingTypes = [ 'ASCII', 'HEX' ];
+    c.genericSigning.hashTypes = EXTERNAL.SIGNING.HASHES;
+    c.genericSigning.curveTypes = EXTERNAL.SIGNING.CURVES;
+    c.genericSigning.encodingTypes = EXTERNAL.SIGNING.ENCODINGS;
     // Supported flags for `getAddresses`
-    c.getAddressFlags = [ GET_ADDR_FLAGS.ED25519_PUB, GET_ADDR_FLAGS.SECP256K1_PUB ];
+    c.getAddressFlags = [ 
+      EXTERNAL.GET_ADDR_FLAGS.ED25519_PUB, 
+      EXTERNAL.GET_ADDR_FLAGS.SECP256K1_PUB 
+    ];
   }
 
   // V0.13.0 added native segwit addresses and fixed a bug in exporting
@@ -431,7 +457,6 @@ function getFwVersionConst(v) {
 const ASCII_REGEX = /^[\x00-\x7F]+$/;
 
 export {
-  GET_ADDR_FLAGS,
   ASCII_REGEX,
   getFwVersionConst,
   ADDR_STR_LEN,
