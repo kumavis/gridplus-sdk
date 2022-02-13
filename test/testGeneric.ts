@@ -237,15 +237,19 @@ describe('Generic signing', () => {
     const txJs = new Transaction({ recentBlockhash }).add(transfer1, transfer2);
     txJs.setSigners(pubA, pubB);
     txJs.sign(Keypair.fromSeed(derivedA.priv), Keypair.fromSeed(derivedB.priv));
+    const serTxJs = txJs.serialize().toString('hex');
 
     // Build a copy of the transaction and get the serialized payload for signing in firmware.
     const txFw = new Transaction({ recentBlockhash }).add(transfer1, transfer2);
     txFw.setSigners(pubA, pubB);
+    // We want to sign the Solana message, not the full transaction
     const payload = txFw.compileMessage().serialize();
+
     // Sign payload from Lattice and add signatures to tx object
     req.data = {
       curveType: Constants.SIGNING.CURVES.ED25519,
       hashType: Constants.SIGNING.HASHES.NONE,
+      encodingType: Constants.SIGNING.ENCODINGS.SOLANA,
       signerPath: derivedAPath,
       payload: `0x${payload.toString('hex')}`
     }
@@ -265,7 +269,6 @@ describe('Generic signing', () => {
 
     // Validate the signatures from the Lattice match those of the Solana library
     const serTxFw = txFw.serialize().toString('hex');
-    const serTxJs = txJs.serialize().toString('hex');
     expect(serTxFw).to.equal(serTxJs, 'Signed tx mismatch');
   })
 
