@@ -297,6 +297,7 @@ export const EXTERNAL = {
   GET_ADDR_FLAGS: {
     SECP256K1_PUB: 3,
     ED25519_PUB: 4,
+    BLS12_381_PUB_G1: 5,
   },
   // Options for building general signing requests
   SIGNING: {
@@ -483,6 +484,8 @@ function getFwVersionConst(v) {
       reserved: 2895728,
       maxSz: 1024,
     };
+    // BLS key derivation support
+    c.getAddrFlags.push(EXTERNAL.GET_ADDR_FLAGS.BLS12_381_PUB_G1);
   }
 
   return c;

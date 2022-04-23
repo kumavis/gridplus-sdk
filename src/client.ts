@@ -339,8 +339,11 @@ export class Client {
       const flags = fwConstants.getAddressFlags || [];
       const isPubkeyOnly =
         flags.indexOf(flag) > -1 &&
-        (flag === EXTERNAL.GET_ADDR_FLAGS.ED25519_PUB ||
-          flag === EXTERNAL.GET_ADDR_FLAGS.SECP256K1_PUB);
+        (
+          flag === EXTERNAL.GET_ADDR_FLAGS.ED25519_PUB ||
+          flag === EXTERNAL.GET_ADDR_FLAGS.SECP256K1_PUB ||
+          flag === EXTERNAL.GET_ADDR_FLAGS.BLS12_381_PUB_G1
+        );
       if (!isPubkeyOnly && !isValidAssetPath(startPath, fwConstants)) {
         return cb('Parent derivation path is not supported');
       }
