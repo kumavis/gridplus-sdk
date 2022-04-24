@@ -321,7 +321,7 @@ export class Client {
    * @returns An array of addresses.
    */
   public getAddresses (
-    opts: { startPath: number[], n: UInt4, flag: UInt4 },
+    opts: { startPath: number[], n: UInt4, flag: UInt4, loopIdx: Uint4 },
     _cb?: (err?: string, data?: Buffer | string[]) => void,
   ): Promise<Buffer | string[]> {
     return new Promise((resolve, reject) => {
@@ -350,7 +350,7 @@ export class Client {
 
       let sz = 32 + 20 + 1; // walletUID + 5 u32 indices + count/flag
       if (fwConstants.varAddrPathSzAllowed) {
-        sz += 1; // pathDepth
+        sz += 1; // pathDepth (plus loopIdx)
       } else if (startPath.length !== 5) {
         return cb(
           'Your Lattice firmware only supports derivation paths with 5 indices. Please upgrade.',
@@ -366,7 +366,17 @@ export class Client {
       off += 32;
       // Build the start path (5x u32 indices)
       if (fwConstants.varAddrPathSzAllowed) {
-        payload.writeUInt8(startPath.length, off);
+        if (this._fwVersionGTE(0, 15, 0)) {
+          // Switch to using 4 bit flags
+          const pathDepthBits = bitwise.nibble.read(startPath.length);
+          // Default to looping on the last index
+          const loopIdxBits = bitwise.nibble.read(loopIdxBits || startPath.length - 1);
+          const val = bitwise.byte.write(pathDepthBits.concat(loopIdxBits) as Byte);
+          payload.writeUInt8(val, off);
+        } else {
+          // Legacy firmware does not allow loopIdx
+          payload.writeUInt8(startPath.length, off);
+        }
         off += 1;
       }
       for (let i = 0; i < 5; i++) {
