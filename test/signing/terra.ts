@@ -135,16 +135,21 @@ describe('[Terra]', () => {
   }
 
   it('Should test address derivations', async () => {
-    const jsAccount = getTerraAccount(req.data.signerPath);
-    console.log('js', Buffer.from(jsAccount.account.public_key.key, 'base64'))
-    const latticePub = await test.client.getAddresses({
-      startPath: DEFAULT_TERRA_SIGNER,
-      n: 1,
-      flag: Constants.GET_ADDR_FLAGS.SECP256K1_PUB,
-    })
-    console.log('latticePub', latticePub)
+    const path = req.data.signerPath;
+    for (let i = 0; i < 5; i++) {
+      path[4] += i;
+      const jsAccount = getTerraAccount(req.data.signerPath);
+      const jsPub = Buffer.from(jsAccount.account.public_key.key, 'base64').toString('hex');
+      const latticePubs = await test.client.getAddresses({
+        startPath: DEFAULT_TERRA_SIGNER,
+        n: 1,
+        flag: Constants.GET_ADDR_FLAGS.SECP256K1_PUB,
+      })
+      const latticePub = test.helpers.compressPubKey(latticePubs[0]).toString('hex');
+      test.expect(latticePub).to.equal(jsPub, 'Pubkeys did not match');
+    }
   })
-/*
+
   it('Should decode MsgSend', async () => {
     // Get signer account
     const signer = getTerraAccount(req.data.signerPath);
@@ -351,5 +356,4 @@ describe('[Terra]', () => {
       .expect(latticeSig)
       .to.equal(jsSig.toString('hex'), 'Sigs did not match');
   });
-  */
 });
