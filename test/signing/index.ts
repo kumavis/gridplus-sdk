@@ -106,7 +106,7 @@ describe('Test General Signing', () => {
     global.test.activeWalletUID = activeWalletUID;
     global.test.continue = true;
   });
-
+/*
   it('Should load determinism tests', async () => {
     require('./determinism');
     global.test.continue = true;
@@ -121,14 +121,15 @@ describe('Test General Signing', () => {
     require('./solana');
     global.test.continue = true;
   });
-
+*/
   it('Should load Terra tests', async () => {
     require('./terra');
     global.test.continue = true;
   });
-
+/*
   it('Should load EVM tests', async () => {
     require('./evm');
     global.test.continue = true;
   });
+*/
 });
