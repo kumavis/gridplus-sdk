@@ -5,24 +5,17 @@ import { encode as rlpEncode } from 'rlp';
 import superagent from 'superagent';
 import bitcoin from './bitcoin';
 import { sha256 } from 'hash.js/lib/hash/sha';
-import { KVRecord, SignData, GetKvRecordsData } from './types/client';
+import { 
+  KVRecord, SignData, GetKvRecordsData, EncryptedDataReq,
+  EncryptedDataResp,
+} from './types/client';
+import { ENC_DATA_TYPES } from './types/constants';
 import { Constants } from './index';
 import {
-  EXTERNAL,
-  ADDR_STR_LEN,
-  ASCII_REGEX,
-  BASE_URL,
-  decResLengths,
-  deviceCodes,
-  encReqCodes,
-  ENC_MSG_LEN,
-  getFwVersionConst,
-  messageConstants,
-  REQUEST_TYPE_BYTE,
-  responseCodes,
-  responseMsgs,
-  signingSchema,
-  VERSION_BYTE,
+  EXTERNAL, ADDR_STR_LEN, ASCII_REGEX, BASE_URL,
+  decResLengths, deviceCodes, encReqCodes, ENC_MSG_LEN,
+  getFwVersionConst, messageConstants, REQUEST_TYPE_BYTE,
+  responseCodes, responseMsgs, signingSchema, VERSION_BYTE,
 } from './constants';
 import ethereum from './ethereum';
 import {
@@ -30,18 +23,15 @@ import {
   parseGenericSigningResponse,
 } from './genericSigning';
 import {
-  aes256_decrypt,
-  aes256_encrypt,
-  checksum,
-  getP256KeyPair,
-  getP256KeyPairFromPub,
-  isValidAssetPath,
-  parseDER,
-  parseLattice1Response,
-  promisifyCb,
-  toPaddedDER,
-  randomBytes,
+  aes256_decrypt, aes256_encrypt, checksum, getP256KeyPair,
+  getP256KeyPairFromPub, isValidAssetPath, parseDER, parseLattice1Response,
+  promisifyCb, toPaddedDER, randomBytes,
 } from './util';
+// Request builders
+import { get_req_BLS_KEYSTORE_EIP2335 } from './encryptedData/blsEIP2335';
+// Response builders
+import { get_resp_BLS_KEYSTORE_EIP2335 } from './encryptedData/blsEIP2335';
+
 const EMPTY_WALLET_UID = Buffer.alloc(32);
 
 /**
@@ -976,6 +966,63 @@ export class Client {
         }
       });
     });
+  }
+
+  /**
+   * `exportEncryptedData` allows export of certain types of data in encrypted form.
+   * When the request is made, the user is prompted to enter a password on the Lattice,
+   * which is used to encrypted the data before returning.
+   * The `opts` parameters will depend on the type of data that is being exported.
+   * @category Lattice
+   * @returns A callback with an error or null.
+   */
+  public exportEncryptedData(
+    opts: EncryptedDataReq, 
+    _cb?: (err?: string) => void,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const cb = promisifyCb(resolve, reject, _cb);
+      // Build the request payload
+      let payload;
+      if (opts.encType === ENC_DATA_TYPES.BLS_KEYSTORE_EIP2335) {
+        if (!this._fwVersionGTE(0, 15, 0)) {
+          return cb('Lattice firmware outdated. Please update.');
+        }
+        if (!opts.blsKeystoreEIP2335.iterations) {
+          return cb('`iterations` must be at least 1');
+        }
+        // Export a BLS12-381 keystore
+        // Need to fill in wallet UID
+        const wallet = this.getActiveWallet();
+        if (!wallet) {
+          return cb('No active wallet.');
+        }
+        opts.blsKeystoreEIP2335.walletUID = wallet.uid;
+        payload = get_req_BLS_KEYSTORE_EIP2335(opts.blsKeystoreEIP2335);
+      } else {
+        return cb('Cannot export unknown data type.');
+      }
+      // Send the request
+      return this._request(payload, 'EXPORT_ENCRYPTED_DATA', (err, res) => {
+        if (err) {
+          return cb(err);
+        }
+        const d = this._handleEncResponse(res, decResLengths.exportEncryptedData);
+        if (d.err) {
+          return cb(d.err);
+        }
+        // The response is prefixed with a 65 byte pubkey
+        const respData = d.data.slice(65);
+        // Deserialize the response depending on request type
+        const resp: EncryptedDataResp = {
+          encType: opts.encType,
+        };
+        if (opts.encType === ENC_DATA_TYPES.BLS_KEYSTORE_EIP2335) {
+          resp.blsKeystoreEIP2335 = get_resp_BLS_KEYSTORE_EIP2335(respData);
+        }
+        return cb(null, resp);
+      })
+    })
   }
 
   /**

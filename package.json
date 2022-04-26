@@ -15,6 +15,7 @@
     "test-btc": "ts-mocha --timeout 180000 -R spec test/testBtc.ts --recursive --exit",
     "test-chaos-monkey": "ts-mocha --timeout 300000 -R spec test/testChaosMonkey.ts --recursive --exit",
     "test-eth-msg": "ts-mocha --timeout 180000 -R spec test/testEthMsg.ts --recursive --exit",
+    "test-enc-export": "ts-mocha --timeout 180000 -R spec test/exportEncryptedData/index.ts --recursive --exit",
     "test-kv": "ts-mocha --timeout 180000 -R spec test/testKv.ts --recursive --exit",
     "test-non-exportable": "ts-mocha --timeout 300000 -R spec test/testNonExportable.ts --recursive --exit",
     "test-signing": "ts-mocha --timeout 120000 -R spec test/signing/index.ts --recursive --exit",
@@ -46,6 +47,7 @@
     "superagent": "^3.8.3"
   },
   "devDependencies": {
+    "@chainsafe/bls-keystore": "^3.0.0",
     "@ethersproject/abi": "^5.5.0",
     "@ethersproject/transactions": "^5.5.0",
     "@noble/bls12-381": "^1.2.0",

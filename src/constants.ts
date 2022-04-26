@@ -1,3 +1,8 @@
+import { 
+  GET_ADDR_FLAGS, SIGNING_HASHES, SIGNING_CURVES, SIGNING_ENCODINGS,
+  ENC_DATA_TYPES
+} from './types/constants';
+
 // Consistent with Lattice's IV
 const AES_IV = [
   0x6d, 0x79, 0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x70, 0x61, 0x73, 0x73, 0x77,
@@ -18,6 +23,7 @@ const decResLengths = {
   getWallets: 142, // 71 bytes per wallet record (response contains internal and external)
   getKvRecords: 1395,
   getDecoders: 1608,
+  exportEncryptedData: 1608,
   removeDecoders: 4,
   test: 1646, // Max size of test response payload
 };
@@ -65,7 +71,8 @@ const encReqCodes = {
   REMOVE_KV_RECORDS: 9,
   GET_DECODERS: 10,
   REMOVE_DECODERS: 11,
-  TEST: 12,
+  EXPORT_ENCRYPTED_DATA: 12,
+  TEST: 13,
 };
 
 const messageConstants = {
@@ -294,28 +301,15 @@ const ethMsgProtocol = {
 //======================================================
 export const EXTERNAL = {
   // Optional flags for `getAddresses`
-  GET_ADDR_FLAGS: {
-    SECP256K1_PUB: 3,
-    ED25519_PUB: 4,
-  },
+  GET_ADDR_FLAGS,
   // Options for building general signing requests
   SIGNING: {
-    HASHES: {
-      NONE: 0,
-      KECCAK256: 1,
-      SHA256: 2,
-    },
-    CURVES: {
-      SECP256K1: 0,
-      ED25519: 1,
-    },
-    ENCODINGS: {
-      NONE: 1,
-      SOLANA: 2,
-      TERRA: 3,
-      EVM: 4,
-    },
+    HASHES: SIGNING_HASHES,
+    CURVES: SIGNING_CURVES,
+    ENCODINGS: SIGNING_ENCODINGS,
   },
+  // Flags for exporting encrypted data
+  ENCRYPTED_DATA_TYPES: ENC_DATA_TYPES,
 };
 
 function getFwVersionConst(v) {

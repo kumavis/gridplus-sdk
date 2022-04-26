@@ -1,4 +1,7 @@
 import 'hash.js';
+import { ENC_DATA_TYPES } from './constants'
+import { EncryptedDataBlsEIP2335Req } from './requests'
+import { EncryptedDataBlsEIP2335Resp } from './responses'
 
 export type KVRecord = {
   id?: number;
@@ -30,3 +33,14 @@ export type GetKvRecordsData = {
   fetched: number;
   total: number;
 };
+
+export type EncryptedDataReq = {
+  encType: ENC_DATA_TYPES;
+  blsKeystoreEIP2335?: EncryptedDataBlsEIP2335Req;
+}
+
+export type EncryptedDataResp = {
+  encType: ENC_DATA_TYPES;
+  blsKeystoreEIP2335?: EncryptedDataBlsEIP2335Resp;
+}
+

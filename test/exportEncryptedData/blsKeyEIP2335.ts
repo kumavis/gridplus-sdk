@@ -6,13 +6,14 @@
  * https://eips.ethereum.org/EIPS/eip-2333
  * 
  * The derivation paths are standardized in EIP2334:
- * https://eips.ethereum.org/EIPS/eip-2334
- * 
- * You must have `FEATURE_TEST_RUNNER10` enabled in firmware to run these tests.
+ * https://eips.ethereum.org/EIPS/eip-2334 
  */
 
-import { deriveSeedTree as deriveSecretKey } from 'bls12-381-keygen';
+import { 
+  IKeystore, create, verifyPassword, isValidKeystore, validateKeystore 
+} from '@chainsafe/bls-keystore';
 import { getPublicKey } from '@noble/bls12-381';
+import { deriveSeedTree as deriveSecretKey } from 'bls12-381-keygen';
 import { BN } from 'bn.js';
 import { question } from 'readline-sync';
 import { Constants } from '../../src/index';
@@ -21,6 +22,12 @@ const cachedData = {
   seed: null,
   activeWalletUID: null,
 };
+
+let jobData, jobType, jobReq;
+
+const PASS = 'test';
+const DEFAULT_EIP2334_WITHDRAWAL_PATH = [ 12381, 3600, 0, 0 ]
+const DEFAULT_EIP2334_VALIDATOR_PATH = [ 12381, 3600, 0, 0, 0 ]
 
 describe('[BLS12-381]', () => {
   beforeEach(() => {
@@ -34,6 +41,7 @@ describe('[BLS12-381]', () => {
     test.continue = true;
   })
 
+/*
   it('Should inform user the seed will be removed', async () => {
     await question(
       '\nThe following tests will remove your SafeCard seed.\n' +
@@ -42,7 +50,6 @@ describe('[BLS12-381]', () => {
     );
     test.continue = true;
   })
-
   it('Should remove the seed', async () => {
     jobType = test.helpers.jobTypes.WALLET_JOB_DELETE_SEED;
     jobData = {
@@ -85,8 +92,40 @@ describe('[BLS12-381]', () => {
     await test.runWalletJob(test.helpers.gpErrors.GP_SUCCESS);
     continueTests = true;
   })
+*/
+  it('Should instruct the user on what password to enter', async () => {
+    await question(
+      `Please use the password "${PASS}" for each encryption that follows.\n` +
+      'Press enter to continue.'
+    );
+  })
 
-  it('Should export the key at m/12381/3600/0/0 (withdrawal)');
+  it('Should export the key at m/12381/3600/0/0 (withdrawal)', async () => {
+    // Get reference keystore
+    const path = DEFAULT_EIP2334_WITHDRAWAL_PATH;
+    const pathStr = test.helpers.getPathStr(path);
+    const password = 'test';
+    const secret = 
+    // First export the keystore from the device
+    const req = {
+      encType: Constants.ENCRYPTED_DATA_TYPES.BLS_KEYSTORE_EIP2335,
+      blsKeystoreEIP2335: {
+        path,
+        // iterations: 262144,
+        iterations: 5000,
+      },
+    };
+    const data = await test.client.exportEncryptedData(req);
+    console.log(data)
+    // Build a keystore from the same params using a reference lib
+  });
+  
   it('Should export the key at m/12381/3600/0/0/0 (validator)');
 
 })
+
+async function getReferenceKeystore(seed, path, opts) {
+  const secretKey = deriveSecretKey(seed, path);
+  const { password, iterations, salt, iv } = opts;
+
+}
