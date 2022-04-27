@@ -37,7 +37,7 @@ const req = {
     payload: null,
   },
 };
-let numDefsInitial = 0;
+const numDefsInitial = 0;
 const encDefs = [],
   encDefsCalldata = [];
 
@@ -82,6 +82,7 @@ describe('Start EVM signing tests', () => {
 });
 
 describe('[EVM] Test transactions', () => {
+
   describe('EIP1559', () => {
     beforeEach(() => {
       test.expect(test.continue).to.equal(true, 'Error in previous test.');
@@ -427,6 +428,7 @@ describe('[EVM] Test decoders', () => {
       test.expect(test.continue).to.equal(true, 'Error in previous test.');
       req.data.payload = null;
       req.data.signerPath = DEFAULT_SIGNER;
+      req.currency = undefined;
       req.txData = {
         gasPrice: 1200000000,
         nonce: 0,
@@ -529,7 +531,12 @@ describe('[EVM] Test decoders', () => {
         await run(req);
       });
     }
+    /*
+    NOTE: The CRUD API to manage calldata decoders is written, but is currently
+    compiled out of firmware to free up code space. For now we will leave
+    these tests commented out and may re-enable them at a later date
 
+    
     // Test committing decoder data
     it('Should save the first 10 defs', async () => {
       const decoderType = Calldata.EVM.type;
@@ -651,6 +658,7 @@ describe('[EVM] Test decoders', () => {
       req.data.decoder = encDefs[9];
       await run(req, true);
     });
+    */
   });
 });
 
